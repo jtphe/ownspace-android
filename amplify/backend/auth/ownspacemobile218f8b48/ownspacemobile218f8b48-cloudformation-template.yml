@@ -101,9 +101,6 @@ Parameters:
   dependsOn:
     Type: CommaDelimitedList
         
-  thirdPartyAuth:
-    Type: String
-              
   userPoolGroups:
     Type: String
               

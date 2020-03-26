@@ -44,20 +44,17 @@
             "Arn"
         ]
     },
-    "useDefault": "manual",
+    "useDefault": "default",
     "usernameAttributes": [
         "email"
     ],
     "triggers": "{}",
-    "userPoolGroupList": [
-        "ownspaceuser"
-    ],
+    "userPoolGroupList": [],
     "parentStack": {
         "Ref": "AWS::StackId"
     },
     "permissions": [],
     "dependsOn": [],
-    "thirdPartyAuth": false,
     "userPoolGroups": true,
     "adminQueries": false,
     "hostedUI": false
