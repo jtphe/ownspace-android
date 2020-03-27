@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.client.Callback
+import com.amazonaws.mobile.client.UserState
 import com.amazonaws.mobile.client.UserStateDetails
 import com.amazonaws.mobile.client.results.SignInResult
 import com.amazonaws.mobile.client.results.SignInState
@@ -28,6 +29,9 @@ class AuthenticationActivity : AppCompatActivity() {
             object : Callback<UserStateDetails> {
                 override fun onResult(userStateDetails: UserStateDetails) {
                     Log.i("INIT", "onResult: " + userStateDetails.userState)
+                    when (userStateDetails.userState) {
+                        UserState.SIGNED_IN -> showHome()
+                    }
                 }
 
                 override fun onError(e: java.lang.Exception) {

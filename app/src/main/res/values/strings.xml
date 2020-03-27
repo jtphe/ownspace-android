@@ -11,4 +11,8 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="app_logo">"Logo d\'OwnSpace"</string>
+    <string name="home_icon">"Icône home"</string>
+    <string name="plus_icon">"Icône plus"</string>
+    <string name="user_icon">"Icône utilisateur"</string>
+
 </resources>
