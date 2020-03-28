@@ -14,5 +14,14 @@
     <string name="home_icon">"Icône home"</string>
     <string name="plus_icon">"Icône plus"</string>
     <string name="user_icon">"Icône utilisateur"</string>
+    <string name="client_logo">"Logo du client"</string>
+    <string name="user_lastname">"Nom"</string>
+    <string name="user_firstname">"Prénom"</string>
+    <string name="user_email">"E-mail"</string>
+    <string name="user_password">"Mot de passe"</string>
+    <string name="logout">"Déconnexion"</string>
+    <string name="enter_lastname">"Entrer un nom…"</string>
+    <string name="enter_firstname">"Entrer un prénom…"</string>
+
 
 </resources>

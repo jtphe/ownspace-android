@@ -10,6 +10,7 @@ import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.client.Callback
 import com.amazonaws.mobile.client.results.SignInResult
 import com.amazonaws.mobile.client.results.SignInState
+import com.facebook.drawee.backends.pipeline.Fresco
 
 
 class MainActivity : AppCompatActivity() {
@@ -17,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        Fresco.initialize(this)
 
         val homeButton: ImageView = findViewById(R.id.homeIcon)
         val plusButton: ImageView = findViewById(R.id.plusIcon)
@@ -33,6 +34,8 @@ class MainActivity : AppCompatActivity() {
 
         userButton.setOnClickListener {
             Log.d("user", "click")
+            val intentUser = Intent(this, UserActivity::class.java)
+            startActivity(intentUser)
         }
 
     }

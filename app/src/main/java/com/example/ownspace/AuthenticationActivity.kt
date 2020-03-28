@@ -71,24 +71,24 @@ class AuthenticationActivity : AppCompatActivity() {
                                 SignInState.DONE -> {
                                     Toast.makeText(
                                         applicationContext,
-                                        "Sign-in done.",
+                                        "Connecté(e)",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                     showHome()
                                 }
                                 SignInState.SMS_MFA -> Toast.makeText(
                                     applicationContext,
-                                    "Please confirm sign-in with SMS.",
+                                    "Veuillez confirmer l'inscription par SMS",
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 SignInState.NEW_PASSWORD_REQUIRED -> Toast.makeText(
                                     applicationContext,
-                                    "Please confirm sign-in with new password.",
+                                    "Veuillez confirmer l'inscription avec un nouveau mot de passe",
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 else -> Toast.makeText(
                                     applicationContext,
-                                    "Unsupported sign-in confirmation: " + signInResult.signInState,
+                                    "Confirmation d'inscription non soutenue: " + signInResult.signInState,
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
