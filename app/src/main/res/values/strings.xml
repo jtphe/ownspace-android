@@ -5,13 +5,21 @@
     <string name="app_name">OwnSpace</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in_short">Connexion</string>
+    <string name="authentication">Connexion</string>
+    <string name="editText_empty">Les champs de texte ne peuvent pas être vides</string>
     <string name="welcome">"Bienvenue !"</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="app_logo">"Logo d\'OwnSpace"</string>
+    <string name="almost_done">On y est presque !</string>
+    <string name="newPasswordTitle">Veuillez entrer un nouveau mot de passe</string>
+    <string name="placeholderNewPasswordTitle">Nouveau mot de passe</string>
 
+
+    <!--Totp page -->
+    <string name="totpTitle">Saisissez le code d\'authentification de l\'application d\'authentification à deux facteurs sur votre appareil</string>
+    <string name="placeholderTotp">Code d\'authentification</string>
 
     <!--Home page -->
     <string name="home_icon">"Icône home"</string>
@@ -37,18 +45,20 @@
 
     <!-- Dialog strings -->
     <string name="cancel">"Annuler"</string>
-    <string name="ok">"Valider"</string>
+    <string name="valid">"Valider"</string>
+    <string name="ok">"OK"</string>
 
     <!-- Toast strings -->
-    <string name="toast_logout">"Vous avez bien été déconnecté(e)"</string>
+    <string name="toast_signin_error">"Email ou mot de passe incorrect"</string>
+    <string name="toast_logout">"Vous êtes déconnecté(e)"</string>
     <string name="toast_contact_support">"Envoyer un email au support"</string>
     <string name="toast_connected">"Connecté(e)"</string>
     <string name="toast_confirm_signin_sms">"Veuillez confirmer l'inscription par SMS"</string>
-    <string name="toast_confirm_signin_new_pwd">"Veuillez confirmer l'inscription avec un nouveau mot de passe"</string>
     <string name="toast_sign_not_confirmed">"Confirmation d'inscription non soutenue: "</string>
+    <string name="toast_no_empty">"Le champ de texte ne peut pas être vide"</string>
+    <string name="toast_invalid_token">"Token invalide"</string>
 
     <!-- Mail string -->
     <string name="mailto">"mailto:ownspaceco@gmail.com"</string>
-
 
 </resources>
