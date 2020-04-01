@@ -1,4 +1,4 @@
-package com.example.ownspace
+package com.example.ownspace.ui.activities
 
 import android.content.Intent
 import android.net.Uri
@@ -9,6 +9,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.developer.kalert.KAlertDialog
+import com.example.ownspace.R
+import kotlinx.android.synthetic.main.activity_user.*
+import kotlinx.android.synthetic.main.header_with_return.*
 
 
 class UserActivity : AppCompatActivity() {
@@ -17,13 +20,17 @@ class UserActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user)
         val user = AWSMobileClient.getInstance().getUsername()
-        val userEmail: TextView = findViewById(R.id.emailText)
-        userEmail.text = user.toString()
-
-        val logoutBtn: Button = findViewById(R.id.logoutBtn)
+        emailText.setText(user.toString())
 
         logoutBtn.setOnClickListener {
             logOut()
+        }
+
+        back_button.setOnClickListener {
+            val homeIntent = Intent(baseContext, MainActivity::class.java)
+            homeIntent.putExtra("alreadySignIn", true)
+            startActivity(homeIntent)
+            finish()
         }
 
         val contactIntent = Intent(Intent.ACTION_SENDTO).setType("message/rfc822")
@@ -32,7 +39,12 @@ class UserActivity : AppCompatActivity() {
 
         val contactTextView: TextView = findViewById(R.id.helpBtn)
         contactTextView.setOnClickListener {
-            startActivity(Intent.createChooser(contactIntent, getString(R.string.toast_contact_support)))
+            startActivity(
+                Intent.createChooser(
+                    contactIntent,
+                    getString(R.string.toast_contact_support)
+                )
+            )
         }
 
     }
@@ -46,18 +58,14 @@ class UserActivity : AppCompatActivity() {
             .setConfirmClickListener {
                 AWSMobileClient.getInstance().signOut()
                 val authenticationIntent = Intent(this, AuthenticationActivity::class.java)
+                authenticationIntent.putExtra("hasLogOut", true)
                 startActivity(authenticationIntent)
-                Toast.makeText(
-                    applicationContext,
-                    getString(R.string.toast_logout),
-                    Toast.LENGTH_SHORT
-                ).show()}
+                finish()
+            }
             .setCancelText(getString(R.string.cancel))
             .showCancelButton(true)
             .confirmButtonColor(R.color.colorPrimaryClient)
             .cancelButtonColor(R.color.colorSecondaryClient)
             .show()
-
-
     }
 }
