@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".UserActivity">
+    tools:context=".ui.activities.UserActivity">
 
     <include
         android:id="@+id/header"
-        layout="@layout/header"
+        layout="@layout/header_with_return"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
@@ -127,7 +127,7 @@
                 android:id="@+id/logoutBtn"
                 android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginBottom="30dp"
                 android:background="@drawable/button_logout"
                 android:text="@string/logout"
@@ -141,7 +141,7 @@
                 android:id="@+id/helpBtn"
                 android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginBottom="30dp"
                 android:background="@drawable/button_ok_client"
                 android:text="@string/need_help"
@@ -150,6 +150,7 @@
                 app:layout_constraintLeft_toRightOf="@id/logoutBtn"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@id/containerBtn" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

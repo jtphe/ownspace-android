@@ -1,16 +1,13 @@
-package com.example.ownspace
+package com.example.ownspace.ui.activities
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.*
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.amazonaws.mobile.client.AWSMobileClient
-import com.amazonaws.mobile.client.Callback
-import com.amazonaws.mobile.client.results.SignInResult
-import com.amazonaws.mobile.client.results.SignInState
-import com.facebook.drawee.backends.pipeline.Fresco
+import com.example.ownspace.R
+import com.example.ownspace.ui.showSnackbar
 
 
 class MainActivity : AppCompatActivity() {
@@ -18,7 +15,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Fresco.initialize(this)
+
+        if (AWSMobileClient.getInstance().isSignedIn) {
+            if (intent?.extras?.getBoolean("alreadySignIn") == false) {
+                showSnackbar(
+                    findViewById(android.R.id.content),
+                    getString(R.string.toast_connected),
+                    false
+                )
+            }
+
+        }
 
         val homeButton: ImageView = findViewById(R.id.homeIcon)
         val plusButton: ImageView = findViewById(R.id.plusIcon)
@@ -33,12 +40,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         userButton.setOnClickListener {
-            Log.d("user", "click")
             val intentUser = Intent(this, UserActivity::class.java)
             startActivity(intentUser)
+            finish()
         }
 
     }
-
 }
 
