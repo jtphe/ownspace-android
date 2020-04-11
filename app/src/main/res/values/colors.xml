@@ -6,6 +6,7 @@
     <color name="colorPrimaryClient">#003466</color>
     <color name="colorSecondaryClient">#E30043</color>
     <color name="subtitle">#80FFFFFF</color>
-    <color name="editTextBgColor">#DBDBDB</color>
-
+    <color name="editTextBgColor">#BDBDBD</color>
+    <color name="dialogBg">#DCDCDC</color>
+    <color name="colorDivider">#ECECEC</color>
 </resources>

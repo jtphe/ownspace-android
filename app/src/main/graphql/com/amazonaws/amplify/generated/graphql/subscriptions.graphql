@@ -1,0 +1,430 @@
+# this is an auto generated file. This will be overwritten
+subscription OnCreateUser {
+  onCreateUser {
+    id
+    firstname
+    lastname
+    email
+    password
+    picture
+    notification
+    role
+    rootFolder
+    group
+    limitedStorage
+    storageSpaceUsed
+    totalStorageSpace
+  }
+}
+subscription OnUpdateUser {
+  onUpdateUser {
+    id
+    firstname
+    lastname
+    email
+    password
+    picture
+    notification
+    role
+    rootFolder
+    group
+    limitedStorage
+    storageSpaceUsed
+    totalStorageSpace
+  }
+}
+subscription OnDeleteUser {
+  onDeleteUser {
+    id
+    firstname
+    lastname
+    email
+    password
+    picture
+    notification
+    role
+    rootFolder
+    group
+    limitedStorage
+    storageSpaceUsed
+    totalStorageSpace
+  }
+}
+subscription OnCreateGroup {
+  onCreateGroup {
+    id
+    name
+    userGroup {
+      id
+      firstname
+      lastname
+      email
+      password
+      picture
+      notification
+      role
+      rootFolder
+      group
+      limitedStorage
+      storageSpaceUsed
+      totalStorageSpace
+    }
+  }
+}
+subscription OnUpdateGroup {
+  onUpdateGroup {
+    id
+    name
+    userGroup {
+      id
+      firstname
+      lastname
+      email
+      password
+      picture
+      notification
+      role
+      rootFolder
+      group
+      limitedStorage
+      storageSpaceUsed
+      totalStorageSpace
+    }
+  }
+}
+subscription OnDeleteGroup {
+  onDeleteGroup {
+    id
+    name
+    userGroup {
+      id
+      firstname
+      lastname
+      email
+      password
+      picture
+      notification
+      role
+      rootFolder
+      group
+      limitedStorage
+      storageSpaceUsed
+      totalStorageSpace
+    }
+  }
+}
+subscription OnCreateFile {
+  onCreateFile {
+    id
+    createdAt
+    updatedAt
+    name
+    content
+    owner
+    sharedList {
+      id
+      firstname
+      lastname
+      email
+      password
+      picture
+      notification
+      role
+      rootFolder
+      group
+      limitedStorage
+      storageSpaceUsed
+      totalStorageSpace
+    }
+    password
+    parent
+    uuid
+    size
+    mimeType
+    type
+  }
+}
+subscription OnUpdateFile {
+  onUpdateFile {
+    id
+    createdAt
+    updatedAt
+    name
+    content
+    owner
+    sharedList {
+      id
+      firstname
+      lastname
+      email
+      password
+      picture
+      notification
+      role
+      rootFolder
+      group
+      limitedStorage
+      storageSpaceUsed
+      totalStorageSpace
+    }
+    password
+    parent
+    uuid
+    size
+    mimeType
+    type
+  }
+}
+subscription OnDeleteFile {
+  onDeleteFile {
+    id
+    createdAt
+    updatedAt
+    name
+    content
+    owner
+    sharedList {
+      id
+      firstname
+      lastname
+      email
+      password
+      picture
+      notification
+      role
+      rootFolder
+      group
+      limitedStorage
+      storageSpaceUsed
+      totalStorageSpace
+    }
+    password
+    parent
+    uuid
+    size
+    mimeType
+    type
+  }
+}
+subscription OnCreateFolder {
+  onCreateFolder {
+    id
+    createdAt
+    updatedAt
+    name
+    owner
+    sharedList {
+      id
+      firstname
+      lastname
+      email
+      password
+      picture
+      notification
+      role
+      rootFolder
+      group
+      limitedStorage
+      storageSpaceUsed
+      totalStorageSpace
+    }
+    password
+    parent
+    nbFiles
+    content {
+      id
+      createdAt
+      updatedAt
+      name
+      content
+      owner
+      sharedList {
+        id
+        firstname
+        lastname
+        email
+        password
+        picture
+        notification
+        role
+        rootFolder
+        group
+        limitedStorage
+        storageSpaceUsed
+        totalStorageSpace
+      }
+      password
+      parent
+      uuid
+      size
+      mimeType
+      type
+    }
+  }
+}
+subscription OnUpdateFolder {
+  onUpdateFolder {
+    id
+    createdAt
+    updatedAt
+    name
+    owner
+    sharedList {
+      id
+      firstname
+      lastname
+      email
+      password
+      picture
+      notification
+      role
+      rootFolder
+      group
+      limitedStorage
+      storageSpaceUsed
+      totalStorageSpace
+    }
+    password
+    parent
+    nbFiles
+    content {
+      id
+      createdAt
+      updatedAt
+      name
+      content
+      owner
+      sharedList {
+        id
+        firstname
+        lastname
+        email
+        password
+        picture
+        notification
+        role
+        rootFolder
+        group
+        limitedStorage
+        storageSpaceUsed
+        totalStorageSpace
+      }
+      password
+      parent
+      uuid
+      size
+      mimeType
+      type
+    }
+  }
+}
+subscription OnDeleteFolder {
+  onDeleteFolder {
+    id
+    createdAt
+    updatedAt
+    name
+    owner
+    sharedList {
+      id
+      firstname
+      lastname
+      email
+      password
+      picture
+      notification
+      role
+      rootFolder
+      group
+      limitedStorage
+      storageSpaceUsed
+      totalStorageSpace
+    }
+    password
+    parent
+    nbFiles
+    content {
+      id
+      createdAt
+      updatedAt
+      name
+      content
+      owner
+      sharedList {
+        id
+        firstname
+        lastname
+        email
+        password
+        picture
+        notification
+        role
+        rootFolder
+        group
+        limitedStorage
+        storageSpaceUsed
+        totalStorageSpace
+      }
+      password
+      parent
+      uuid
+      size
+      mimeType
+      type
+    }
+  }
+}
+subscription OnCreateRight {
+  onCreateRight {
+    read
+    edit
+    documentId
+  }
+}
+subscription OnUpdateRight {
+  onUpdateRight {
+    read
+    edit
+    documentId
+  }
+}
+subscription OnDeleteRight {
+  onDeleteRight {
+    read
+    edit
+    documentId
+  }
+}
+subscription OnCreateApp {
+  onCreateApp {
+    groupId
+    subscription
+    pack
+    custom
+    headerColor
+    iconeUrl
+    font
+  }
+}
+subscription OnUpdateApp {
+  onUpdateApp {
+    groupId
+    subscription
+    pack
+    custom
+    headerColor
+    iconeUrl
+    font
+  }
+}
+subscription OnDeleteApp {
+  onDeleteApp {
+    groupId
+    subscription
+    pack
+    custom
+    headerColor
+    iconeUrl
+    font
+  }
+}
