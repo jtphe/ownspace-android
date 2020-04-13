@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="@drawable/authentication_background"
     tools:context=".ui.activities.AuthenticationActivity">
 
     <FrameLayout
@@ -21,7 +21,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="45dp"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="20dp"
                 android:text="@string/app_name"
                 android:textColor="@android:color/white"
                 android:textSize="46sp"

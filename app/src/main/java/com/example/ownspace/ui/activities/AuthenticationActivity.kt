@@ -20,17 +20,14 @@ import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient
 import com.example.ownspace.R
 import com.example.ownspace.ui.fragments.TotpFragment
 import com.example.ownspace.ui.showSnackbar
-import com.facebook.drawee.backends.pipeline.Fresco
 import kotlinx.android.synthetic.main.activity_authentication.*
 
 
 class AuthenticationActivity : AppCompatActivity() {
-    private var mAWSAppSyncClient: AWSAppSyncClient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication)
-        Fresco.initialize(this)
 
         AWSMobileClient.getInstance().initialize(
             applicationContext,

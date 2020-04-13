@@ -72,6 +72,7 @@ class TotpFragment : Fragment() {
 
     private fun showHome() {
         val homeIntent = Intent(activity, MainActivity::class.java)
+        homeIntent.putExtra("alreadySignIn", false)
         activity?.startActivity(homeIntent)
         activity?.finish()
     }
