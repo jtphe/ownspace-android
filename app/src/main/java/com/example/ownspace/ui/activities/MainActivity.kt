@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
             .context(applicationContext)
             .awsConfiguration(AWSConfiguration(applicationContext))
             .build()
-        changeIconColor(homeIcon)
+        changeIconColor(home)
 
         if (AWSMobileClient.getInstance().isSignedIn) {
             if (intent?.extras?.getBoolean("alreadySignIn") == false) {
@@ -50,17 +50,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val homeButton: ImageView = findViewById(R.id.homeIcon)
-        val plusButton: ImageView = findViewById(R.id.plusIcon)
-        val userButton: ImageView = findViewById(R.id.userIcon)
-
-        homeButton.setOnClickListener {
-            changeIconColor(homeButton)
-            Log.d("home", "click")
+        home.setOnClickListener {
+            changeIconColor(home)
         }
 
-        plusButton.setOnClickListener {
-            changeIconColor(plusButton)
+        plus.setOnClickListener {
+            changeIconColor(plus)
             val bottomSheetDialog = BottomSheetDialog(
                 this, R.style.BottomSheetDialogMenuTheme
             )
@@ -88,6 +83,7 @@ class MainActivity : AppCompatActivity() {
                  */
                 createFolderDialog.cancelBtn.setOnClickListener {
                     createFolderDialog.dismiss()
+                    changeIconColor(home)
                 }
 
                 /**
@@ -102,8 +98,13 @@ class MainActivity : AppCompatActivity() {
                             "7f863e6e-c834-4dca-aec4-89c9d71c0976"
                         )
                         createFolderDialog.dismiss()
+                        changeIconColor(home)
                     } else {
-                        showSnackbar(window.decorView.mainActivity, getString(R.string.toast_create_folder_not_null), true)
+                        showSnackbar(
+                            window.decorView.mainActivity,
+                            getString(R.string.toast_create_folder_not_null),
+                            true
+                        )
                     }
                 }
             }
@@ -112,8 +113,8 @@ class MainActivity : AppCompatActivity() {
             bottomSheetDialog.show()
         }
 
-        userButton.setOnClickListener {
-            changeIconColor(userButton)
+        user.setOnClickListener {
+            changeIconColor(user)
             val intentUser = Intent(this, UserActivity::class.java)
             startActivity(intentUser)
             finish()
@@ -127,20 +128,29 @@ class MainActivity : AppCompatActivity() {
      */
     private fun changeIconColor(icon: ImageView) {
         when (icon) {
-            homeIcon -> {
-                homeIcon.setColorFilter(resources.getColor(R.color.colorSecondaryClient))
-                plusIcon.setColorFilter(resources.getColor(android.R.color.white))
-                userIcon.setColorFilter(resources.getColor(android.R.color.white))
+            home -> {
+                home.setColorFilter(resources.getColor(R.color.colorSecondaryClient))
+                plus.setColorFilter(resources.getColor(android.R.color.white))
+                user.setColorFilter(resources.getColor(android.R.color.white))
+                homeDot.visibility = View.VISIBLE
+                plusDot.visibility = View.INVISIBLE
+                userDot.visibility = View.INVISIBLE
             }
-            plusIcon -> {
-                homeIcon.setColorFilter(resources.getColor(android.R.color.white))
-                plusIcon.setColorFilter(resources.getColor(R.color.colorSecondaryClient))
-                userIcon.setColorFilter(resources.getColor(android.R.color.white))
+            plus -> {
+                home.setColorFilter(resources.getColor(android.R.color.white))
+                plus.setColorFilter(resources.getColor(R.color.colorSecondaryClient))
+                user.setColorFilter(resources.getColor(android.R.color.white))
+                homeDot.visibility = View.INVISIBLE
+                plusDot.visibility = View.VISIBLE
+                userDot.visibility = View.INVISIBLE
             }
-            userIcon -> {
-                homeIcon.setColorFilter(resources.getColor(android.R.color.white))
-                plusIcon.setColorFilter(resources.getColor(android.R.color.white))
-                userIcon.setColorFilter(resources.getColor(R.color.colorSecondaryClient))
+            user -> {
+                home.setColorFilter(resources.getColor(android.R.color.white))
+                plus.setColorFilter(resources.getColor(android.R.color.white))
+                user.setColorFilter(resources.getColor(R.color.colorSecondaryClient))
+                homeDot.visibility = View.INVISIBLE
+                plusDot.visibility = View.INVISIBLE
+                userDot.visibility = View.VISIBLE
             }
             else -> {
                 Log.d("Error", "Undefined icon")
