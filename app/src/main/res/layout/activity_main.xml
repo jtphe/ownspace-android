@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/mainActivity"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -24,51 +23,103 @@
         android:layout_marginBottom="40dp"
         android:background="@drawable/nav_menu"
         android:paddingTop="20dp"
-        android:paddingBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent">
 
-        <ImageView
+        <LinearLayout
             android:id="@+id/homeIcon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
-            android:clickable="true"
-            android:contentDescription="@string/home_icon"
-            android:focusable="true"
-            android:paddingTop="5dp"
-            android:src="@drawable/ic_home"
+            android:orientation="vertical"
             app:layout_constraintLeft_toLeftOf="@id/navMenu"
             app:layout_constraintRight_toLeftOf="@id/plusIcon"
-            app:layout_constraintTop_toTopOf="@id/navMenu" />
+            app:layout_constraintTop_toTopOf="@id/navMenu">
 
-        <ImageView
+            <ImageView
+                android:id="@+id/home"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:clickable="true"
+                android:contentDescription="@string/home_icon"
+                android:focusable="true"
+                android:paddingTop="5dp"
+                android:src="@drawable/ic_home" />
+
+            <ImageView
+                android:id="@+id/homeDot"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/home_icon"
+                android:src="@drawable/ic_dot_single" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/plusIcon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:layout_marginEnd="50dp"
-            android:clickable="true"
-            android:contentDescription="@string/plus_icon"
-            android:focusable="true"
-            android:src="@drawable/ic_plus_circle"
+            android:orientation="vertical"
             app:layout_constraintLeft_toRightOf="@id/homeIcon"
             app:layout_constraintRight_toLeftOf="@id/userIcon"
-            app:layout_constraintTop_toTopOf="@id/navMenu" />
+            app:layout_constraintTop_toTopOf="@id/navMenu">
 
-        <ImageView
+            <ImageView
+                android:id="@+id/plus"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:clickable="true"
+                android:contentDescription="@string/plus_icon"
+                android:focusable="true"
+                android:src="@drawable/ic_plus_circle" />
+
+            <ImageView
+                android:id="@+id/plusDot"
+                android:visibility="invisible"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/home_icon"
+                android:src="@drawable/ic_dot_single" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/userIcon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:layout_marginEnd="40dp"
-            android:clickable="true"
-            android:contentDescription="@string/user_icon"
-            android:focusable="true"
-            android:paddingTop="5dp"
-            android:src="@drawable/ic_user"
+            android:orientation="vertical"
             app:layout_constraintLeft_toRightOf="@id/plusIcon"
-            app:layout_constraintTop_toTopOf="@id/navMenu" />
+            app:layout_constraintTop_toTopOf="@id/navMenu">
+
+            <ImageView
+                android:id="@+id/user"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:clickable="true"
+                android:contentDescription="@string/user_icon"
+                android:focusable="true"
+                android:paddingTop="5dp"
+                android:src="@drawable/ic_user" />
+
+            <ImageView
+                android:id="@+id/userDot"
+                android:visibility="invisible"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/home_icon"
+                android:src="@drawable/ic_dot_single" />
+
+        </LinearLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
