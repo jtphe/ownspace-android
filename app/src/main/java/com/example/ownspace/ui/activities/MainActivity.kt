@@ -167,7 +167,9 @@ class MainActivity : AppCompatActivity() {
         object : GraphQLCall.Callback<CreateFolderMutation.Data?>() {
             override fun onResponse(response: com.apollographql.apollo.api.Response<CreateFolderMutation.Data?>) {
                 val data = response.data()?.createFolder()
-                val folder = Folder(data!!.id(), data.name(), data.owner())
+                Log.d("data name =>", data!!.name())
+                Log.d("data =>", data.toString())
+//                val folder = Folder(data!!.id(), data.name(), data.owner())
             }
 
             override fun onFailure(@Nonnull e: ApolloException) {
