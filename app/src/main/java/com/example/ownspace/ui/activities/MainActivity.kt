@@ -15,10 +15,11 @@ import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient
 import com.apollographql.apollo.GraphQLCall
 import com.apollographql.apollo.exception.ApolloException
 import com.example.ownspace.R
-import com.example.ownspace.models.Folder
 import com.example.ownspace.ui.showSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.bottom_valid_cancel.*
 import kotlinx.android.synthetic.main.create_folder_dialog.*
 import kotlinx.android.synthetic.main.layout_bottom_sheet_menu.*
 import kotlinx.android.synthetic.main.layout_bottom_sheet_menu.view.*
@@ -102,7 +103,7 @@ class MainActivity : AppCompatActivity() {
                         )
                         createFolderDialog.dismiss()
                     } else {
-                        showSnackbar(it, getString(R.string.toast_create_folder_not_null), true)
+                        showSnackbar(window.decorView.mainActivity, getString(R.string.toast_create_folder_not_null), true)
                     }
                 }
             }

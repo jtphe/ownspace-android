@@ -41,16 +41,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:textColor="@android:color/white"
+            android:fontFamily="@font/helveticaneue_light"
             android:text="@string/app_slogan_part_one"
+            android:textColor="@android:color/white"
             android:textSize="38sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:textColor="@android:color/white"
+            android:fontFamily="@font/helveticaneue_bold"
             android:text="@string/app_slogan_part_two"
+            android:textColor="@android:color/white"
             android:textSize="38sp"
             android:textStyle="bold" />
 

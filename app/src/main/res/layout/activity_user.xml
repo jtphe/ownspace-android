@@ -34,7 +34,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/profilePicture"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="4dp"
+            android:fontFamily="@font/dejavusans"
             android:text="Jean-Thavorak Phe"
             android:textAlignment="center" />
 
@@ -55,6 +56,7 @@
             style="@style/TitleUserInfos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/dejavusans"
             android:text="@string/user_lastname"
             app:layout_constraintTop_toTopOf="@id/userProfileInfos" />
 
@@ -64,6 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edit_text"
+            android:fontFamily="@font/dejavusans_extra_light"
             android:text="@string/enter_lastname"
             app:layout_constraintTop_toBottomOf="@id/lastNameTitle" />
 
@@ -72,6 +75,7 @@
             style="@style/TitleUserInfos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/dejavusans"
             android:text="@string/user_firstname"
             app:layout_constraintTop_toBottomOf="@id/lastNameText" />
 
@@ -81,6 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edit_text"
+            android:fontFamily="@font/dejavusans_extra_light"
             android:text="@string/enter_firstname"
             app:layout_constraintTop_toBottomOf="@id/firstNameTitle" />
 
@@ -89,6 +94,7 @@
             style="@style/TitleUserInfos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/dejavusans"
             android:text="@string/user_email"
             app:layout_constraintTop_toBottomOf="@id/firstNameText" />
 
@@ -98,6 +104,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edit_text"
+            android:fontFamily="@font/dejavusans_extra_light"
             app:layout_constraintTop_toBottomOf="@id/emailTitle" />
 
         <TextView
@@ -105,6 +112,7 @@
             style="@style/TitleUserInfos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/dejavusans"
             android:text="@string/user_password"
             app:layout_constraintTop_toBottomOf="@id/emailText" />
 
@@ -114,6 +122,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edit_text"
+            android:fontFamily="@font/dejavusans_extra_light"
             android:text="@string/passwordPlaceholder"
             app:layout_constraintTop_toBottomOf="@id/passwordTitle" />
 
@@ -132,7 +141,9 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="30dp"
                 android:background="@drawable/button_logout"
+                android:fontFamily="@font/dejavusans"
                 android:text="@string/logout"
+                android:textAllCaps="false"
                 android:textColor="@android:color/white" />
 
             <Button
@@ -143,7 +154,9 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="30dp"
                 android:background="@drawable/button_ok_client"
+                android:fontFamily="@font/dejavusans"
                 android:text="@string/need_help"
+                android:textAllCaps="false"
                 android:textColor="@android:color/white" />
 
         </RelativeLayout>
