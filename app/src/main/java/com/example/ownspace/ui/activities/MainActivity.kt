@@ -8,22 +8,35 @@ import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.amazonaws.amplify.generated.graphql.CreateFolderMutation
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.amazonaws.amplify.generated.graphql.ListFilesQuery
+import com.amazonaws.amplify.generated.graphql.ListFoldersQuery
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.config.AWSConfiguration
 import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient
+import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers
 import com.apollographql.apollo.GraphQLCall
 import com.apollographql.apollo.exception.ApolloException
+import com.developer.kalert.KAlertDialog
 import com.example.ownspace.R
+import com.example.ownspace.adapter.GetFilesListAdapter
+import com.example.ownspace.adapter.GetFoldersListAdapter
+import com.example.ownspace.api.createFolder
+import com.example.ownspace.models.User
 import com.example.ownspace.ui.showSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.vicpin.krealmextensions.deleteAll
+import com.vicpin.krealmextensions.queryFirst
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.bottom_valid_cancel.*
 import kotlinx.android.synthetic.main.create_folder_dialog.*
 import kotlinx.android.synthetic.main.layout_bottom_sheet_menu.*
 import kotlinx.android.synthetic.main.layout_bottom_sheet_menu.view.*
-import type.CreateFolderInput
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.annotation.Nonnull
 
 
@@ -34,11 +47,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Generate the client that will make call to the API
         mAWSAppSyncClient = AWSAppSyncClient.builder()
             .context(applicationContext)
             .awsConfiguration(AWSConfiguration(applicationContext))
             .build()
+
         changeIconColor(home)
+        getAllDocuments(mAWSAppSyncClient as AWSAppSyncClient)
 
         if (AWSMobileClient.getInstance().isSignedIn) {
             if (intent?.extras?.getBoolean("alreadySignIn") == false) {
@@ -48,6 +65,8 @@ class MainActivity : AppCompatActivity() {
                     false
                 )
             }
+        } else {
+            logOut()
         }
 
         home.setOnClickListener {
@@ -95,9 +114,11 @@ class MainActivity : AppCompatActivity() {
                     ) {
                         createFolder(
                             createFolderDialog.folderNameInput.text.toString(),
-                            "7f863e6e-c834-4dca-aec4-89c9d71c0976"
+                            User().queryFirst()?.id.toString(),
+                            mAWSAppSyncClient as AWSAppSyncClient
                         )
                         createFolderDialog.dismiss()
+                        getAllDocuments(mAWSAppSyncClient as AWSAppSyncClient)
                         changeIconColor(home)
                     } else {
                         showSnackbar(
@@ -160,34 +181,100 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Create the folder
-     * @param name String - The folder name
-     * @param owner String - Owner of the file (by default the creator)
+     * Get all the folders from the DataBase
+     * @param mAWSAppSyncClient AWSAppSyncClient
      */
-    fun createFolder(name: String, owner: String) {
-        val createFolderInput: CreateFolderInput =
-            CreateFolderInput.builder().name(name).owner(owner).build()
-        mAWSAppSyncClient?.mutate(
-            CreateFolderMutation.builder().input(createFolderInput).build()
-        )
-            ?.enqueue(mutationCallback);
+    private fun getAllDocuments(mAWSAppSyncClient: AWSAppSyncClient) {
+        // Request to get all the folders
+        mAWSAppSyncClient.query(ListFoldersQuery.builder().build()).responseFetcher(
+            AppSyncResponseFetchers.CACHE_AND_NETWORK
+        ).enqueue(folderListCallback)
+
+        // Request to get all the files
+        mAWSAppSyncClient.query(ListFilesQuery.builder().build()).responseFetcher(
+            AppSyncResponseFetchers.CACHE_AND_NETWORK
+        ).enqueue(filesListCallBack)
     }
 
-
-    private val mutationCallback: GraphQLCall.Callback<CreateFolderMutation.Data?> =
-        object : GraphQLCall.Callback<CreateFolderMutation.Data?>() {
-            override fun onResponse(response: com.apollographql.apollo.api.Response<CreateFolderMutation.Data?>) {
-                val data = response.data()?.createFolder()
-                Log.d("data name =>", data!!.name())
-                Log.d("data =>", data.toString())
-//                val folder = Folder(data!!.id(), data.name(), data.owner())
+    /**
+     * Callback of the folder request
+     */
+    private val folderListCallback: GraphQLCall.Callback<ListFoldersQuery.Data?> =
+        object : GraphQLCall.Callback<ListFoldersQuery.Data?>() {
+            override fun onResponse(response: com.apollographql.apollo.api.Response<ListFoldersQuery.Data?>) {
+                response.data()?.listFolders()?.items().also {
+                    val foldersFilter = it?.filter { item ->
+                        item.owner() == User().queryFirst()?.id.toString()
+                    }
+                    GlobalScope.launch {
+                        if (foldersFilter!!.isNotEmpty()) {
+                            withContext(Dispatchers.Main) {
+                                recyclerViewFolders.apply {
+                                    layoutManager = LinearLayoutManager(context)
+                                    adapter = GetFoldersListAdapter(foldersFilter)
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             override fun onFailure(@Nonnull e: ApolloException) {
-                Log.e("Error", e.toString())
+                Log.e("ERROR", e.toString())
             }
         }
 
 
+    /**
+     * Callback of the file request
+     */
+    private val filesListCallBack: GraphQLCall.Callback<ListFilesQuery.Data?> =
+        object : GraphQLCall.Callback<ListFilesQuery.Data?>() {
+            override fun onResponse(response: com.apollographql.apollo.api.Response<ListFilesQuery.Data?>) {
+                response.data()?.listFiles()?.items().also {
+                    val filesFilter = it?.filter { item ->
+                        item.owner() == User().queryFirst()?.id.toString()
+                    }
+                    GlobalScope.launch {
+                        if (filesFilter!!.isNotEmpty()) {
+                            withContext(Dispatchers.Main) {
+                                recyclerViewFiles.apply {
+                                    layoutManager = LinearLayoutManager(context)
+                                    adapter = GetFilesListAdapter(filesFilter)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(@Nonnull e: ApolloException) {
+                Log.e("ERROR", e.toString())
+            }
+        }
+
+    /**
+     * Sign out of the application
+     */
+    private fun logOut() {
+        KAlertDialog(this, KAlertDialog.CUSTOM_IMAGE_TYPE)
+            .setCustomImage(R.drawable.ic_log_out)
+            .setTitleText(getString(R.string.logout))
+            .setContentText(getString(R.string.logout_message))
+            .setConfirmText(getString(R.string.logout))
+            .setConfirmClickListener {
+                User().deleteAll()
+                AWSMobileClient.getInstance().signOut()
+                val authenticationIntent = Intent(this, AuthenticationActivity::class.java)
+                authenticationIntent.putExtra("hasLogOut", true)
+                startActivity(authenticationIntent)
+                finish()
+            }
+            .setCancelText(getString(R.string.cancel))
+            .showCancelButton(true)
+            .confirmButtonColor(R.color.colorPrimaryClient)
+            .cancelButtonColor(R.color.colorSecondaryClient)
+            .show()
+    }
 }
 

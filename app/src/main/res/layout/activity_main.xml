@@ -10,9 +10,23 @@
     tools:context=".ui.activities.MainActivity">
 
     <include
+        android:id="@+id/include"
         layout="@layout/header"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerViewFolders" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewFolders"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/include" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewFiles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewFolders" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/navMenu"
@@ -79,12 +93,12 @@
 
             <ImageView
                 android:id="@+id/plusDot"
-                android:visibility="invisible"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:contentDescription="@string/home_icon"
-                android:src="@drawable/ic_dot_single" />
+                android:src="@drawable/ic_dot_single"
+                android:visibility="invisible" />
 
         </LinearLayout>
 
@@ -110,12 +124,12 @@
 
             <ImageView
                 android:id="@+id/userDot"
-                android:visibility="invisible"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:contentDescription="@string/home_icon"
-                android:src="@drawable/ic_dot_single" />
+                android:src="@drawable/ic_dot_single"
+                android:visibility="invisible" />
 
         </LinearLayout>
 

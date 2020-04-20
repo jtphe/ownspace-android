@@ -3,13 +3,14 @@ package com.example.ownspace.ui.activities
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.developer.kalert.KAlertDialog
 import com.example.ownspace.R
+import com.example.ownspace.models.User
+import com.vicpin.krealmextensions.deleteAll
+import com.vicpin.krealmextensions.queryFirst
 import kotlinx.android.synthetic.main.activity_user.*
 import kotlinx.android.synthetic.main.header_with_return.*
 
@@ -19,8 +20,8 @@ class UserActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user)
-        val user = AWSMobileClient.getInstance().getUsername()
-        emailText.setText(user.toString())
+
+        emailText.text = User().queryFirst()?.email.toString()
 
         logoutBtn.setOnClickListener {
             logOut()
@@ -56,6 +57,7 @@ class UserActivity : AppCompatActivity() {
             .setContentText(getString(R.string.logout_message))
             .setConfirmText(getString(R.string.logout))
             .setConfirmClickListener {
+                User().deleteAll()
                 AWSMobileClient.getInstance().signOut()
                 val authenticationIntent = Intent(this, AuthenticationActivity::class.java)
                 authenticationIntent.putExtra("hasLogOut", true)
