@@ -73,4 +73,7 @@
     <string name="create_folder">"Créer un dossier"</string>
     <string name="passwordPlaceholder">*******</string>
 
+    <!-- Icons description -->
+    <string name="icon">"Icon"</string>
+
 </resources>

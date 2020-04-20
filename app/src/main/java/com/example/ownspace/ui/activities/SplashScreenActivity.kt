@@ -12,26 +12,28 @@ import com.amazonaws.mobile.client.Callback
 import com.amazonaws.mobile.client.UserState
 import com.amazonaws.mobile.client.UserStateDetails
 import com.example.ownspace.R
+import com.example.ownspace.models.User
 import com.example.ownspace.ui.showSnackbar
 import com.facebook.drawee.backends.pipeline.Fresco
-import kotlinx.android.synthetic.main.activity_authentication.*
-
+import com.vicpin.krealmextensions.queryFirst
+import com.vicpin.krealmextensions.save
+import io.realm.Realm
 
 class SplashScreenActivity : AppCompatActivity() {
 
     var splashProgress: ProgressBar? = null
-    var SPLASH_TIME = 3000 //This is 3 seconds
+    var SPLASH_TIME = 2000 //This is 2 seconds
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
         Fresco.initialize(this)
+        Realm.init(this)
 
         //This is additional feature, used to run a progress bar
         splashProgress = findViewById(R.id.splashProgress)
         playProgress()
-
 
 
         //Code to start timer and take action after the timer ends
@@ -42,7 +44,33 @@ class SplashScreenActivity : AppCompatActivity() {
                     override fun onResult(userStateDetails: UserStateDetails) {
                         Log.i("INIT", "onResult: " + userStateDetails.userState)
                         when (userStateDetails.userState) {
-                            UserState.SIGNED_IN -> showHome()
+                            UserState.SIGNED_IN -> {
+                                val clientId =
+                                    AWSMobileClient.getInstance().userAttributes["sub"]
+                                        .toString()
+                                val clientEmail =
+                                    AWSMobileClient.getInstance().userAttributes["email"].toString()
+                                val user = User().queryFirst() {
+                                    equalTo(
+                                        "id",
+                                        clientId
+                                    )
+                                }?.id.toString()
+
+                                if (user != clientId) {
+                                    // Create the new user object
+                                    val newUser = User()
+                                    newUser.id = clientId
+                                    newUser.email = clientEmail
+                                    // Add the user object to RealmDB
+                                    newUser.save()
+                                    // Go to the home activity
+                                    showHome()
+                                } else {
+                                    // User already present in RealmDB, go to the home activity
+                                    showHome()
+                                }
+                            }
                             UserState.SIGNED_OUT -> if (intent?.extras?.getBoolean("hasLogOut") == true) {
                                 showSnackbar(
                                     findViewById(android.R.id.content),
@@ -59,6 +87,7 @@ class SplashScreenActivity : AppCompatActivity() {
                             )
                         }
                     }
+
                     override fun onError(e: java.lang.Exception) {
                         Log.e("INIT", "Initialization error.", e)
                     }
@@ -72,7 +101,7 @@ class SplashScreenActivity : AppCompatActivity() {
      */
     private fun playProgress() {
         ObjectAnimator.ofInt(splashProgress, "progress", 100)
-            .setDuration(5000)
+            .setDuration(2000)
             .start();
     }
 
@@ -89,7 +118,7 @@ class SplashScreenActivity : AppCompatActivity() {
     /**
      * Go to the authentication activity
      */
-    private fun showAuthentication(){
+    private fun showAuthentication() {
         val authenticationIntent = Intent(this, AuthenticationActivity::class.java)
         startActivity(authenticationIntent)
         finish()

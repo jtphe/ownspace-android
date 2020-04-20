@@ -16,7 +16,6 @@ import com.amazonaws.mobile.client.UserState
 import com.amazonaws.mobile.client.UserStateDetails
 import com.amazonaws.mobile.client.results.SignInResult
 import com.amazonaws.mobile.client.results.SignInState
-import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient
 import com.example.ownspace.R
 import com.example.ownspace.ui.fragments.TotpFragment
 import com.example.ownspace.ui.showSnackbar
