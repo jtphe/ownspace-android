@@ -21,13 +21,18 @@ import com.example.ownspace.ui.fragments.TotpFragment
 import com.example.ownspace.ui.showSnackbar
 import kotlinx.android.synthetic.main.activity_authentication.*
 
-
+/**
+ * The AuthenticationActivity class
+ */
 class AuthenticationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication)
 
+        /**
+         * Initialize the user's instance of AWS Amplify
+         */
         AWSMobileClient.getInstance().initialize(
             applicationContext,
             object : Callback<UserStateDetails> {
@@ -67,6 +72,9 @@ class AuthenticationActivity : AppCompatActivity() {
 
         val btnSignIn: Button = findViewById(R.id.signInBtn)
 
+        /**
+         * When user click on the sign in button
+         */
         btnSignIn.setOnClickListener {
             closeKeyboard()
             val username: String = emailInput.text.toString()
@@ -115,6 +123,9 @@ class AuthenticationActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Show the Main Activity
+     */
     private fun showHome() {
         val homeIntent = Intent(this, MainActivity::class.java)
         homeIntent.putExtra("alreadySignIn", false)
@@ -123,6 +134,9 @@ class AuthenticationActivity : AppCompatActivity() {
         passwordInput.setText("")
     }
 
+    /**
+     * Close the keyboard
+     */
     private fun closeKeyboard() {
         val view = this.currentFocus
         if (view !== null) {
@@ -131,6 +145,9 @@ class AuthenticationActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Show the ToTpFragment
+     */
     private fun showTotpFragment() {
         supportFragmentManager.beginTransaction()
             .replace(authFrameLayout.id, TotpFragment())

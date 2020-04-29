@@ -19,7 +19,9 @@ import com.example.ownspace.ui.activities.MainActivity
 import com.example.ownspace.ui.showSnackbar
 import kotlinx.android.synthetic.main.fragment_new_password.*
 
-
+/**
+ * The NewPasswordFragment class
+ */
 class NewPasswordFragment : Fragment() {
 
     override fun onCreateView(
@@ -41,6 +43,11 @@ class NewPasswordFragment : Fragment() {
         }
     }
 
+    /**
+     * Confirm the Sign In
+     * @param it View - The current view
+     * @param password String - The new user password
+     */
     private fun confirmSignIn(it: View, password: String) {
         AWSMobileClient.getInstance()
             .confirmSignIn(password, object : Callback<SignInResult?> {

@@ -14,7 +14,9 @@ import com.vicpin.krealmextensions.queryFirst
 import kotlinx.android.synthetic.main.activity_user.*
 import kotlinx.android.synthetic.main.header_with_return.*
 
-
+/**
+ * The UserActivity class
+ */
 class UserActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +52,9 @@ class UserActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Log out the user from the application
+     */
     private fun logOut() {
         KAlertDialog(this, KAlertDialog.CUSTOM_IMAGE_TYPE)
             .setCustomImage(R.drawable.ic_log_out)

@@ -20,7 +20,9 @@ import com.example.ownspace.ui.showSnackbar
 import com.vicpin.krealmextensions.save
 import kotlinx.android.synthetic.main.fragment_totp.*
 
-
+/**
+ * The TotpFragment class
+ */
 class TotpFragment : Fragment() {
 
     override fun onCreateView(
@@ -34,6 +36,9 @@ class TotpFragment : Fragment() {
         validBtn.setOnClickListener {
             try {
                 if (totpToken.text.trim().isNotEmpty()) {
+                    /**
+                     * Confirm the user sign in on AWS Amplify
+                     */
                     AWSMobileClient.getInstance().confirmSignIn(
                         totpToken.text.toString(),
                         object : Callback<SignInResult> {
@@ -84,6 +89,9 @@ class TotpFragment : Fragment() {
         }
     }
 
+    /**
+     * Show the Main Activity
+     */
     private fun showHome() {
         val homeIntent = Intent(activity, MainActivity::class.java)
         homeIntent.putExtra("alreadySignIn", false)

@@ -8,6 +8,11 @@ import com.amazonaws.amplify.generated.graphql.ListFoldersQuery
 import com.example.ownspace.R
 import kotlinx.android.synthetic.main.document_item_list.view.*
 
+/**
+ * The GetFoldersListAdapter adapter
+ * @property list List<Item> - List of Folders
+ * @constructor
+ */
 class GetFoldersListAdapter(private val list: List<ListFoldersQuery.Item>) :
     RecyclerView.Adapter<GetFoldersListAdapter.GetFoldersViewHolder>() {
 
