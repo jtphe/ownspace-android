@@ -39,7 +39,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.annotation.Nonnull
 
-
+/**
+ * The MainActivity class
+ * @property mAWSAppSyncClient AWSAppSyncClient? - The user's instance of AWS Amplify
+ * @property folderListCallback Callback<Data?> - The folder list callback
+ * @property filesListCallBack Callback<Data?> - The files list callback
+ */
 class MainActivity : AppCompatActivity() {
 
     private var mAWSAppSyncClient: AWSAppSyncClient? = null
@@ -182,7 +187,7 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Get all the folders from the DataBase
-     * @param mAWSAppSyncClient AWSAppSyncClient
+     * @param mAWSAppSyncClient AWSAppSyncClient - The user's instance of AWS Amplify
      */
     private fun getAllDocuments(mAWSAppSyncClient: AWSAppSyncClient) {
         // Request to get all the folders

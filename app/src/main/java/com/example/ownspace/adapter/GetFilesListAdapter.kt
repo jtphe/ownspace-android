@@ -8,6 +8,11 @@ import com.amazonaws.amplify.generated.graphql.ListFilesQuery
 import com.example.ownspace.R
 import kotlinx.android.synthetic.main.document_item_list.view.*
 
+/**
+ * The GetFilesListAdapter class
+ * @property list List<Item> - List of Files
+ * @constructor
+ */
 class GetFilesListAdapter(private val list: List<ListFilesQuery.Item>) :
     RecyclerView.Adapter<GetFilesListAdapter.GetFilesViewHolder>() {
 

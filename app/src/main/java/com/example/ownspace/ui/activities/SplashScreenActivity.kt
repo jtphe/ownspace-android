@@ -19,6 +19,11 @@ import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
 import io.realm.Realm
 
+/**
+ * The SplashScreenActivity class
+ * @property splashProgress ProgressBar? - The progress bar of the splashscreen
+ * @property SPLASH_TIME Int - The time taken by the progress bar to fill entirely
+ */
 class SplashScreenActivity : AppCompatActivity() {
 
     var splashProgress: ProgressBar? = null

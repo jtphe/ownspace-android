@@ -23,7 +23,9 @@ fun createFolder(name: String, owner: String, mAWSAppSyncClient: AWSAppSyncClien
         ?.enqueue(mutationCallback);
 }
 
-
+/**
+ * Callback of the CreateFolderMutation
+ */
 private val mutationCallback: GraphQLCall.Callback<CreateFolderMutation.Data?> =
     object : GraphQLCall.Callback<CreateFolderMutation.Data?>() {
         override fun onResponse(response: com.apollographql.apollo.api.Response<CreateFolderMutation.Data?>) {

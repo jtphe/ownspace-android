@@ -5,6 +5,18 @@ import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import java.util.*
 
+/**
+ * Folder class
+ * @property id String? - Folder's id
+ * @property createdAt Date? - Folder's creation date
+ * @property updatedAt Date? - Folder's updating date
+ * @property name String? - Folder's name
+ * @property owner String? - Folder's owner
+ * @property sharedList RealmList<User>? - Folder's sharedList
+ * @property password String? - Folder's password
+ * @property parent String? - Folder's parent folder
+ * @property nbFiles Int? - Number of files in the folder
+ */
 open class Folder() : RealmObject() {
     @PrimaryKey
     var id: String? = null
