@@ -17,7 +17,7 @@ import java.util.*
  * @property parent String? - Folder's parent folder
  * @property nbFiles Int? - Number of files in the folder
  */
-open class Folder() : RealmObject() {
+open class Folder : RealmObject() {
     @PrimaryKey
     var id: String? = null
     var createdAt: Date? = null

@@ -1,35 +1,4 @@
 # this is an auto generated file. This will be overwritten
-query CreateTxtFile($name: String!, $content: String!) {
-  createTxtFile(name: $name, content: $content) {
-    id
-    createdAt
-    updatedAt
-    name
-    content
-    owner
-    sharedList {
-      id
-      firstname
-      lastname
-      email
-      password
-      picture
-      notification
-      role
-      rootFolder
-      group
-      limitedStorage
-      storageSpaceUsed
-      totalStorageSpace
-    }
-    password
-    parent
-    uuid
-    size
-    mimeType
-    type
-  }
-}
 query GetUser($id: ID!) {
   getUser(id: $id) {
     id
@@ -40,7 +9,6 @@ query GetUser($id: ID!) {
     picture
     notification
     role
-    rootFolder
     group
     limitedStorage
     storageSpaceUsed
@@ -62,7 +30,6 @@ query ListUsers(
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
@@ -84,7 +51,6 @@ query GetGroup($id: ID!) {
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
@@ -110,7 +76,6 @@ query ListGroups(
         picture
         notification
         role
-        rootFolder
         group
         limitedStorage
         storageSpaceUsed
@@ -137,15 +102,14 @@ query GetFile($id: ID!) {
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
       totalStorageSpace
     }
+    isProtected
     password
     parent
-    uuid
     size
     mimeType
     type
@@ -173,15 +137,14 @@ query ListFiles(
         picture
         notification
         role
-        rootFolder
         group
         limitedStorage
         storageSpaceUsed
         totalStorageSpace
       }
+      isProtected
       password
       parent
-      uuid
       size
       mimeType
       type
@@ -205,44 +168,15 @@ query GetFolder($id: ID!) {
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
       totalStorageSpace
     }
+    isProtected
     password
     parent
     nbFiles
-    content {
-      id
-      createdAt
-      updatedAt
-      name
-      content
-      owner
-      sharedList {
-        id
-        firstname
-        lastname
-        email
-        password
-        picture
-        notification
-        role
-        rootFolder
-        group
-        limitedStorage
-        storageSpaceUsed
-        totalStorageSpace
-      }
-      password
-      parent
-      uuid
-      size
-      mimeType
-      type
-    }
   }
 }
 query ListFolders(
@@ -266,44 +200,15 @@ query ListFolders(
         picture
         notification
         role
-        rootFolder
         group
         limitedStorage
         storageSpaceUsed
         totalStorageSpace
       }
+      isProtected
       password
       parent
       nbFiles
-      content {
-        id
-        createdAt
-        updatedAt
-        name
-        content
-        owner
-        sharedList {
-          id
-          firstname
-          lastname
-          email
-          password
-          picture
-          notification
-          role
-          rootFolder
-          group
-          limitedStorage
-          storageSpaceUsed
-          totalStorageSpace
-        }
-        password
-        parent
-        uuid
-        size
-        mimeType
-        type
-      }
     }
     nextToken
   }

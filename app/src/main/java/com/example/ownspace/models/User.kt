@@ -19,7 +19,7 @@ import io.realm.annotations.PrimaryKey
  * @property storageSpaceUsed Double? - User's storage used
  * @property totalStorageSpace Double? - User's total storage
  */
-open class User() : RealmObject() {
+open class User : RealmObject() {
     @PrimaryKey
     var id: String? = null
     var firstname: String? = null

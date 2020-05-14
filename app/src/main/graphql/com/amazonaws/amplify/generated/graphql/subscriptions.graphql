@@ -9,7 +9,6 @@ subscription OnCreateUser {
     picture
     notification
     role
-    rootFolder
     group
     limitedStorage
     storageSpaceUsed
@@ -26,7 +25,6 @@ subscription OnUpdateUser {
     picture
     notification
     role
-    rootFolder
     group
     limitedStorage
     storageSpaceUsed
@@ -43,7 +41,6 @@ subscription OnDeleteUser {
     picture
     notification
     role
-    rootFolder
     group
     limitedStorage
     storageSpaceUsed
@@ -63,7 +60,6 @@ subscription OnCreateGroup {
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
@@ -84,7 +80,6 @@ subscription OnUpdateGroup {
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
@@ -105,7 +100,6 @@ subscription OnDeleteGroup {
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
@@ -130,15 +124,14 @@ subscription OnCreateFile {
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
       totalStorageSpace
     }
+    isProtected
     password
     parent
-    uuid
     size
     mimeType
     type
@@ -161,15 +154,14 @@ subscription OnUpdateFile {
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
       totalStorageSpace
     }
+    isProtected
     password
     parent
-    uuid
     size
     mimeType
     type
@@ -192,15 +184,14 @@ subscription OnDeleteFile {
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
       totalStorageSpace
     }
+    isProtected
     password
     parent
-    uuid
     size
     mimeType
     type
@@ -222,44 +213,15 @@ subscription OnCreateFolder {
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
       totalStorageSpace
     }
+    isProtected
     password
     parent
     nbFiles
-    content {
-      id
-      createdAt
-      updatedAt
-      name
-      content
-      owner
-      sharedList {
-        id
-        firstname
-        lastname
-        email
-        password
-        picture
-        notification
-        role
-        rootFolder
-        group
-        limitedStorage
-        storageSpaceUsed
-        totalStorageSpace
-      }
-      password
-      parent
-      uuid
-      size
-      mimeType
-      type
-    }
   }
 }
 subscription OnUpdateFolder {
@@ -278,44 +240,15 @@ subscription OnUpdateFolder {
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
       totalStorageSpace
     }
+    isProtected
     password
     parent
     nbFiles
-    content {
-      id
-      createdAt
-      updatedAt
-      name
-      content
-      owner
-      sharedList {
-        id
-        firstname
-        lastname
-        email
-        password
-        picture
-        notification
-        role
-        rootFolder
-        group
-        limitedStorage
-        storageSpaceUsed
-        totalStorageSpace
-      }
-      password
-      parent
-      uuid
-      size
-      mimeType
-      type
-    }
   }
 }
 subscription OnDeleteFolder {
@@ -334,44 +267,15 @@ subscription OnDeleteFolder {
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
       totalStorageSpace
     }
+    isProtected
     password
     parent
     nbFiles
-    content {
-      id
-      createdAt
-      updatedAt
-      name
-      content
-      owner
-      sharedList {
-        id
-        firstname
-        lastname
-        email
-        password
-        picture
-        notification
-        role
-        rootFolder
-        group
-        limitedStorage
-        storageSpaceUsed
-        totalStorageSpace
-      }
-      password
-      parent
-      uuid
-      size
-      mimeType
-      type
-    }
   }
 }
 subscription OnCreateRight {

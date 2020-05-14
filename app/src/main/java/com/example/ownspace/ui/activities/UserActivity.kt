@@ -8,6 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.developer.kalert.KAlertDialog
 import com.example.ownspace.R
+import com.example.ownspace.models.Folder
+import com.example.ownspace.models.Path
+import com.example.ownspace.models.PathItem
 import com.example.ownspace.models.User
 import com.vicpin.krealmextensions.deleteAll
 import com.vicpin.krealmextensions.queryFirst
@@ -62,7 +65,7 @@ class UserActivity : AppCompatActivity() {
             .setContentText(getString(R.string.logout_message))
             .setConfirmText(getString(R.string.logout))
             .setConfirmClickListener {
-                User().deleteAll()
+                cleanDB()
                 AWSMobileClient.getInstance().signOut()
                 val authenticationIntent = Intent(this, AuthenticationActivity::class.java)
                 authenticationIntent.putExtra("hasLogOut", true)
@@ -74,5 +77,15 @@ class UserActivity : AppCompatActivity() {
             .confirmButtonColor(R.color.colorPrimaryClient)
             .cancelButtonColor(R.color.colorSecondaryClient)
             .show()
+    }
+
+    /**
+     * Clean the RealmDB
+     */
+    private fun cleanDB(){
+        User().deleteAll()
+        Path().deleteAll()
+        PathItem().deleteAll()
+        Folder().deleteAll()
     }
 }

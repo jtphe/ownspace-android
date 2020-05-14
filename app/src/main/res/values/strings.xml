@@ -76,4 +76,7 @@
     <!-- Icons description -->
     <string name="icon">"Icon"</string>
 
+    <!-- Path -->
+    <string name="home_path">"Accueil"</string>
+
 </resources>

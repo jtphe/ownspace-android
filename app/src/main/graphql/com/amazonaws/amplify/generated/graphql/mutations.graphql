@@ -12,7 +12,6 @@ mutation CreateUser(
     picture
     notification
     role
-    rootFolder
     group
     limitedStorage
     storageSpaceUsed
@@ -32,7 +31,6 @@ mutation UpdateUser(
     picture
     notification
     role
-    rootFolder
     group
     limitedStorage
     storageSpaceUsed
@@ -52,7 +50,6 @@ mutation DeleteUser(
     picture
     notification
     role
-    rootFolder
     group
     limitedStorage
     storageSpaceUsed
@@ -75,7 +72,6 @@ mutation CreateGroup(
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
@@ -99,7 +95,6 @@ mutation UpdateGroup(
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
@@ -123,7 +118,6 @@ mutation DeleteGroup(
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
@@ -151,15 +145,14 @@ mutation CreateFile(
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
       totalStorageSpace
     }
+    isProtected
     password
     parent
-    uuid
     size
     mimeType
     type
@@ -185,15 +178,14 @@ mutation UpdateFile(
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
       totalStorageSpace
     }
+    isProtected
     password
     parent
-    uuid
     size
     mimeType
     type
@@ -219,15 +211,14 @@ mutation DeleteFile(
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
       totalStorageSpace
     }
+    isProtected
     password
     parent
-    uuid
     size
     mimeType
     type
@@ -252,44 +243,15 @@ mutation CreateFolder(
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
       totalStorageSpace
     }
+    isProtected
     password
     parent
     nbFiles
-    content {
-      id
-      createdAt
-      updatedAt
-      name
-      content
-      owner
-      sharedList {
-        id
-        firstname
-        lastname
-        email
-        password
-        picture
-        notification
-        role
-        rootFolder
-        group
-        limitedStorage
-        storageSpaceUsed
-        totalStorageSpace
-      }
-      password
-      parent
-      uuid
-      size
-      mimeType
-      type
-    }
   }
 }
 mutation UpdateFolder(
@@ -311,44 +273,15 @@ mutation UpdateFolder(
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
       totalStorageSpace
     }
+    isProtected
     password
     parent
     nbFiles
-    content {
-      id
-      createdAt
-      updatedAt
-      name
-      content
-      owner
-      sharedList {
-        id
-        firstname
-        lastname
-        email
-        password
-        picture
-        notification
-        role
-        rootFolder
-        group
-        limitedStorage
-        storageSpaceUsed
-        totalStorageSpace
-      }
-      password
-      parent
-      uuid
-      size
-      mimeType
-      type
-    }
   }
 }
 mutation DeleteFolder(
@@ -370,44 +303,15 @@ mutation DeleteFolder(
       picture
       notification
       role
-      rootFolder
       group
       limitedStorage
       storageSpaceUsed
       totalStorageSpace
     }
+    isProtected
     password
     parent
     nbFiles
-    content {
-      id
-      createdAt
-      updatedAt
-      name
-      content
-      owner
-      sharedList {
-        id
-        firstname
-        lastname
-        email
-        password
-        picture
-        notification
-        role
-        rootFolder
-        group
-        limitedStorage
-        storageSpaceUsed
-        totalStorageSpace
-      }
-      password
-      parent
-      uuid
-      size
-      mimeType
-      type
-    }
   }
 }
 mutation CreateRight(
