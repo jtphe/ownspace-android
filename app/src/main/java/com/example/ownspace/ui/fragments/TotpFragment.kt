@@ -14,6 +14,8 @@ import com.amazonaws.mobile.client.Callback
 import com.amazonaws.mobile.client.results.SignInResult
 import com.amazonaws.mobile.client.results.SignInState
 import com.example.ownspace.R
+import com.example.ownspace.models.Path
+import com.example.ownspace.models.PathItem
 import com.example.ownspace.models.User
 import com.example.ownspace.ui.activities.MainActivity
 import com.example.ownspace.ui.showSnackbar
@@ -59,8 +61,20 @@ class TotpFragment : Fragment() {
                                             val newUser = User()
                                             newUser.id = clientId
                                             newUser.email = clientEmail
-                                            // Add the user object to RealmDB
+
+                                            // Create the root path
+                                            val home = PathItem()
+                                            home.id = "-1"
+                                            home.name = getString(R.string.home_path)
+                                            // Add the home path to the root path and save to RealmDB
+                                            Path().apply {
+                                                path.add(home)
+                                            }.save()
+
+                                            // Save the user and the path to RealmDB
                                             newUser.save()
+                                            home.save()
+
                                             // Go to the home activity
                                             showHome()
                                         }

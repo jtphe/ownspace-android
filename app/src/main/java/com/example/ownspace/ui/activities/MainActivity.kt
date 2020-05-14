@@ -22,6 +22,7 @@ import com.example.ownspace.R
 import com.example.ownspace.adapter.GetFilesListAdapter
 import com.example.ownspace.adapter.GetFoldersListAdapter
 import com.example.ownspace.api.createFolder
+import com.example.ownspace.models.Path
 import com.example.ownspace.models.User
 import com.example.ownspace.ui.showSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -37,6 +38,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import type.ModelFileFilterInput
+import type.ModelFolderFilterInput
+import type.ModelIDInput
 import javax.annotation.Nonnull
 
 /**
@@ -60,7 +64,15 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         changeIconColor(home)
-        getAllDocuments(mAWSAppSyncClient as AWSAppSyncClient)
+
+        val currentPath = Path().queryFirst()!!.path
+
+        currentPath[currentPath.size - 1]!!.id?.let {
+            getAllDocuments(
+                mAWSAppSyncClient as AWSAppSyncClient, User().queryFirst()?.id.toString(),
+                it
+            )
+        }
 
         if (AWSMobileClient.getInstance().isSignedIn) {
             if (intent?.extras?.getBoolean("alreadySignIn") == false) {
@@ -123,7 +135,13 @@ class MainActivity : AppCompatActivity() {
                             mAWSAppSyncClient as AWSAppSyncClient
                         )
                         createFolderDialog.dismiss()
-                        getAllDocuments(mAWSAppSyncClient as AWSAppSyncClient)
+                        currentPath[currentPath.size - 1]!!.id?.let {
+                            getAllDocuments(
+                                mAWSAppSyncClient as AWSAppSyncClient,
+                                User().queryFirst()?.id.toString(),
+                                it
+                            )
+                        }
                         changeIconColor(home)
                     } else {
                         showSnackbar(
@@ -189,15 +207,25 @@ class MainActivity : AppCompatActivity() {
      * Get all the folders from the DataBase
      * @param mAWSAppSyncClient AWSAppSyncClient - The user's instance of AWS Amplify
      */
-    private fun getAllDocuments(mAWSAppSyncClient: AWSAppSyncClient) {
+    private fun getAllDocuments(mAWSAppSyncClient: AWSAppSyncClient, user: String, parent: String) {
+        Log.d("user =>", user)
+        Log.d("parent =>", parent)
         // Request to get all the folders
-        mAWSAppSyncClient.query(ListFoldersQuery.builder().build()).responseFetcher(
-            AppSyncResponseFetchers.CACHE_AND_NETWORK
+        mAWSAppSyncClient.query(
+            ListFoldersQuery.builder().filter(
+                ModelFolderFilterInput.builder()
+                    .owner(ModelIDInput.builder().contains(user).build())
+                    .parent(ModelIDInput.builder().contains(parent).build()).build()
+            ).limit(100).build()
         ).enqueue(folderListCallback)
 
         // Request to get all the files
-        mAWSAppSyncClient.query(ListFilesQuery.builder().build()).responseFetcher(
-            AppSyncResponseFetchers.CACHE_AND_NETWORK
+        mAWSAppSyncClient.query(
+            ListFilesQuery.builder().filter(
+                ModelFileFilterInput.builder()
+                    .owner(ModelIDInput.builder().contains(user).build())
+                    .parent(ModelIDInput.builder().contains(parent).build()).build()
+            ).limit(100).build()
         ).enqueue(filesListCallBack)
     }
 
@@ -207,16 +235,16 @@ class MainActivity : AppCompatActivity() {
     private val folderListCallback: GraphQLCall.Callback<ListFoldersQuery.Data?> =
         object : GraphQLCall.Callback<ListFoldersQuery.Data?>() {
             override fun onResponse(response: com.apollographql.apollo.api.Response<ListFoldersQuery.Data?>) {
+
+                Log.d("response folder =>", response.data()?.listFolders()?.items().toString())
                 response.data()?.listFolders()?.items().also {
-                    val foldersFilter = it?.filter { item ->
-                        item.owner() == User().queryFirst()?.id.toString()
-                    }
+                    val foldersList = it
                     GlobalScope.launch {
-                        if (foldersFilter!!.isNotEmpty()) {
+                        if (foldersList!!.isNotEmpty()) {
                             withContext(Dispatchers.Main) {
                                 recyclerViewFolders.apply {
                                     layoutManager = LinearLayoutManager(context)
-                                    adapter = GetFoldersListAdapter(foldersFilter)
+                                    adapter = GetFoldersListAdapter(foldersList)
                                 }
                             }
                         }
@@ -236,16 +264,15 @@ class MainActivity : AppCompatActivity() {
     private val filesListCallBack: GraphQLCall.Callback<ListFilesQuery.Data?> =
         object : GraphQLCall.Callback<ListFilesQuery.Data?>() {
             override fun onResponse(response: com.apollographql.apollo.api.Response<ListFilesQuery.Data?>) {
+                Log.d("response file =>", response.data()?.listFiles()?.items().toString())
                 response.data()?.listFiles()?.items().also {
-                    val filesFilter = it?.filter { item ->
-                        item.owner() == User().queryFirst()?.id.toString()
-                    }
+                    val filesList = it
                     GlobalScope.launch {
-                        if (filesFilter!!.isNotEmpty()) {
+                        if (filesList!!.isNotEmpty()) {
                             withContext(Dispatchers.Main) {
                                 recyclerViewFiles.apply {
                                     layoutManager = LinearLayoutManager(context)
-                                    adapter = GetFilesListAdapter(filesFilter)
+                                    adapter = GetFilesListAdapter(filesList)
                                 }
                             }
                         }
