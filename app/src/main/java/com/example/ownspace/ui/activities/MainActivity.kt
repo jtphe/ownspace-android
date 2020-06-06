@@ -8,19 +8,15 @@ import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amazonaws.amplify.generated.graphql.ListFilesQuery
-import com.amazonaws.amplify.generated.graphql.ListFoldersQuery
 import com.amazonaws.mobile.client.AWSMobileClient
-import com.amazonaws.mobile.config.AWSConfiguration
-import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient
-import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers
-import com.apollographql.apollo.GraphQLCall
-import com.apollographql.apollo.exception.ApolloException
+import com.amplifyframework.api.graphql.model.ModelQuery
+import com.amplifyframework.core.Amplify
+import com.amplifyframework.datastore.generated.model.Folder
 import com.developer.kalert.KAlertDialog
 import com.example.ownspace.R
-import com.example.ownspace.adapter.GetFilesListAdapter
-import com.example.ownspace.adapter.GetFoldersListAdapter
+import com.example.ownspace.adapter.GetDocumentsListAdapter
 import com.example.ownspace.api.createFolder
 import com.example.ownspace.models.Path
 import com.example.ownspace.models.User
@@ -28,6 +24,7 @@ import com.example.ownspace.ui.showSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.vicpin.krealmextensions.deleteAll
 import com.vicpin.krealmextensions.queryFirst
+import com.vicpin.krealmextensions.save
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.bottom_valid_cancel.*
@@ -38,38 +35,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import type.ModelFileFilterInput
-import type.ModelFolderFilterInput
-import type.ModelIDInput
-import javax.annotation.Nonnull
+import java.io.File
 
 /**
  * The MainActivity class
- * @property mAWSAppSyncClient AWSAppSyncClient? - The user's instance of AWS Amplify
- * @property folderListCallback Callback<Data?> - The folder list callback
- * @property filesListCallBack Callback<Data?> - The files list callback
  */
 class MainActivity : AppCompatActivity() {
 
-    private var mAWSAppSyncClient: AWSAppSyncClient? = null
+    private val currentUser = Amplify.Auth.currentUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        // Generate the client that will make call to the API
-        mAWSAppSyncClient = AWSAppSyncClient.builder()
-            .context(applicationContext)
-            .awsConfiguration(AWSConfiguration(applicationContext))
-            .build()
-
         changeIconColor(home)
 
+        // Load all the document of the current path
         val currentPath = Path().queryFirst()!!.path
-
         currentPath[currentPath.size - 1]!!.id?.let {
             getAllDocuments(
-                mAWSAppSyncClient as AWSAppSyncClient, User().queryFirst()?.id.toString(),
+                currentUser.userId,
                 it
             )
         }
@@ -129,16 +113,20 @@ class MainActivity : AppCompatActivity() {
                     if (createFolderDialog.folderNameInput.text.trim()
                             .isNotEmpty() && createFolderDialog.folderNameInput.text.length > 3
                     ) {
+                        val folderName = createFolderDialog.folderNameInput.text.toString()
+                        val folder = File(applicationContext.filesDir, folderName)
+                        folder.writeText("")
+                        val parent: String = currentPath[currentPath.size - 1]?.id.toString()
                         createFolder(
-                            createFolderDialog.folderNameInput.text.toString(),
-                            User().queryFirst()?.id.toString(),
-                            mAWSAppSyncClient as AWSAppSyncClient
+                            folderName,
+                            folder,
+                            parent,
+                            currentUser.userId
                         )
                         createFolderDialog.dismiss()
                         currentPath[currentPath.size - 1]!!.id?.let {
                             getAllDocuments(
-                                mAWSAppSyncClient as AWSAppSyncClient,
-                                User().queryFirst()?.id.toString(),
+                                currentUser.userId,
                                 it
                             )
                         }
@@ -163,6 +151,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intentUser)
             finish()
         }
+
     }
 
 
@@ -205,85 +194,109 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Get all the folders from the DataBase
-     * @param mAWSAppSyncClient AWSAppSyncClient - The user's instance of AWS Amplify
+     * @param user String - The user's id
+     * @param parent String - The id of the parent folder in which the user is located
      */
-    private fun getAllDocuments(mAWSAppSyncClient: AWSAppSyncClient, user: String, parent: String) {
-        Log.d("user =>", user)
-        Log.d("parent =>", parent)
+    private fun getAllDocuments(user: String, parent: String) {
+        // Create the list that will contain all the documents
+        val documentList: MutableList<Any> = mutableListOf()
+
         // Request to get all the folders
-        mAWSAppSyncClient.query(
-            ListFoldersQuery.builder().filter(
-                ModelFolderFilterInput.builder()
-                    .owner(ModelIDInput.builder().contains(user).build())
-                    .parent(ModelIDInput.builder().contains(parent).build()).build()
-            ).limit(100).build()
-        ).enqueue(folderListCallback)
+        Amplify.API.query(
+            ModelQuery.list(
+                Folder::class.java,
+                Folder.OWNER.contains(user).and(Folder.PARENT.contains(parent))
+            ),
+            { response ->
+                Log.d("before", "folder")
+
+                response.data.also { it ->
+                    if (it !== null) {
+                        it.forEach {
+                            val tmpFolder = com.example.ownspace.models.Folder()
+                            tmpFolder.id = it.id
+                            tmpFolder.createdAt = it.createdAt
+                            tmpFolder.updatedAt = it.updatedAt
+                            tmpFolder.name = it.name
+                            tmpFolder.owner = it.owner
+                            tmpFolder.isProtected = it.isProtected
+                            tmpFolder.parent = it.parent
+                            tmpFolder.nbFiles = it.nbFiles
+                            tmpFolder.save()
+                            documentList.add(tmpFolder)
+                        }
+                    }
+                }
+            },
+            { error ->
+                Log.e("Error =>", error.toString())
+            }
+        )
 
         // Request to get all the files
-        mAWSAppSyncClient.query(
-            ListFilesQuery.builder().filter(
-                ModelFileFilterInput.builder()
-                    .owner(ModelIDInput.builder().contains(user).build())
-                    .parent(ModelIDInput.builder().contains(parent).build()).build()
-            ).limit(100).build()
-        ).enqueue(filesListCallBack)
+        Amplify.API.query(
+            ModelQuery.list(
+                com.amplifyframework.datastore.generated.model.File::class.java,
+                com.amplifyframework.datastore.generated.model.File.OWNER.contains(user)
+                    .and(com.amplifyframework.datastore.generated.model.File.PARENT.contains(parent))
+            ),
+            { response ->
+                Log.d("before", "file")
+                response.data.also {
+                    GlobalScope.launch {
+                        if (it !== null) {
+                            it.forEach {
+                                val tmpFile = com.example.ownspace.models.File()
+                                tmpFile.id = it.id
+                                tmpFile.createdAt = it.createdAt
+                                tmpFile.updatedAt = it.updatedAt
+                                tmpFile.name = it.name
+                                tmpFile.content = it.content
+                                tmpFile.owner = it.owner
+                                tmpFile.isProtected = it.isProtected
+                                tmpFile.parent = it.parent
+                                tmpFile.size = it.size
+                                tmpFile.mimeType = it.mimeType
+                                tmpFile.type = it.type
+                                tmpFile.save()
+                                documentList.add(tmpFile)
+                            }
+                            withContext(Dispatchers.Main) {
+                                recyclerViewDocuments.apply {
+                                    ConstraintLayout.inflate(
+                                        context,
+                                        R.layout.activity_main,
+                                        null
+                                    ) as ConstraintLayout
+                                    layoutManager = LinearLayoutManager(context)
+                                    adapter = GetDocumentsListAdapter(
+                                        documentList
+                                    )
+                                }
+                            }
+                        } else if (documentList.isNotEmpty()) {
+                            withContext(Dispatchers.Main) {
+                                recyclerViewDocuments.apply {
+                                    ConstraintLayout.inflate(
+                                        context,
+                                        R.layout.activity_main,
+                                        null
+                                    ) as ConstraintLayout
+                                    layoutManager = LinearLayoutManager(context)
+                                    adapter = GetDocumentsListAdapter(
+                                        documentList
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            { error ->
+                Log.e("Error =>", error.toString())
+            }
+        )
     }
-
-    /**
-     * Callback of the folder request
-     */
-    private val folderListCallback: GraphQLCall.Callback<ListFoldersQuery.Data?> =
-        object : GraphQLCall.Callback<ListFoldersQuery.Data?>() {
-            override fun onResponse(response: com.apollographql.apollo.api.Response<ListFoldersQuery.Data?>) {
-
-                Log.d("response folder =>", response.data()?.listFolders()?.items().toString())
-                response.data()?.listFolders()?.items().also {
-                    val foldersList = it
-                    GlobalScope.launch {
-                        if (foldersList!!.isNotEmpty()) {
-                            withContext(Dispatchers.Main) {
-                                recyclerViewFolders.apply {
-                                    layoutManager = LinearLayoutManager(context)
-                                    adapter = GetFoldersListAdapter(foldersList)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            override fun onFailure(@Nonnull e: ApolloException) {
-                Log.e("ERROR", e.toString())
-            }
-        }
-
-
-    /**
-     * Callback of the file request
-     */
-    private val filesListCallBack: GraphQLCall.Callback<ListFilesQuery.Data?> =
-        object : GraphQLCall.Callback<ListFilesQuery.Data?>() {
-            override fun onResponse(response: com.apollographql.apollo.api.Response<ListFilesQuery.Data?>) {
-                Log.d("response file =>", response.data()?.listFiles()?.items().toString())
-                response.data()?.listFiles()?.items().also {
-                    val filesList = it
-                    GlobalScope.launch {
-                        if (filesList!!.isNotEmpty()) {
-                            withContext(Dispatchers.Main) {
-                                recyclerViewFiles.apply {
-                                    layoutManager = LinearLayoutManager(context)
-                                    adapter = GetFilesListAdapter(filesList)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            override fun onFailure(@Nonnull e: ApolloException) {
-                Log.e("ERROR", e.toString())
-            }
-        }
 
     /**
      * Sign out of the application
@@ -308,5 +321,6 @@ class MainActivity : AppCompatActivity() {
             .cancelButtonColor(R.color.colorSecondaryClient)
             .show()
     }
+
 }
 

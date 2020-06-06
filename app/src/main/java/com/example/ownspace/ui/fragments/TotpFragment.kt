@@ -13,6 +13,13 @@ import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.client.Callback
 import com.amazonaws.mobile.client.results.SignInResult
 import com.amazonaws.mobile.client.results.SignInState
+import com.amplifyframework.api.ApiException
+import com.amplifyframework.api.graphql.GraphQLResponse
+import com.amplifyframework.api.graphql.model.ModelQuery
+import com.amplifyframework.core.Amplify
+import com.amplifyframework.core.Consumer
+import com.amplifyframework.storage.StorageAccessLevel
+import com.amplifyframework.storage.options.StorageDownloadFileOptions
 import com.example.ownspace.R
 import com.example.ownspace.models.Path
 import com.example.ownspace.models.PathItem
@@ -21,6 +28,7 @@ import com.example.ownspace.ui.activities.MainActivity
 import com.example.ownspace.ui.showSnackbar
 import com.vicpin.krealmextensions.save
 import kotlinx.android.synthetic.main.fragment_totp.*
+
 
 /**
  * The TotpFragment class
@@ -48,6 +56,7 @@ class TotpFragment : Fragment() {
                                 val clientId =
                                     AWSMobileClient.getInstance().userAttributes["sub"]
                                         .toString()
+                                Log.d("clientId =>", clientId)
                                 val clientEmail =
                                     AWSMobileClient.getInstance().userAttributes["email"].toString()
                                 runOnUiThread {
@@ -57,26 +66,7 @@ class TotpFragment : Fragment() {
                                     )
                                     when (signInResult.signInState) {
                                         SignInState.DONE -> {
-                                            // Create the new user object
-                                            val newUser = User()
-                                            newUser.id = clientId
-                                            newUser.email = clientEmail
-
-                                            // Create the root path
-                                            val home = PathItem()
-                                            home.id = "-1"
-                                            home.name = getString(R.string.home_path)
-                                            // Add the home path to the root path and save to RealmDB
-                                            Path().apply {
-                                                path.add(home)
-                                            }.save()
-
-                                            // Save the user and the path to RealmDB
-                                            newUser.save()
-                                            home.save()
-
-                                            // Go to the home activity
-                                            showHome()
+                                            loadUser(Amplify.Auth.currentUser.userId)
                                         }
                                         else -> {
                                             showSnackbar(
@@ -101,6 +91,49 @@ class TotpFragment : Fragment() {
                 Log.d("Exception => ", e.toString())
             }
         }
+    }
+
+    private fun loadUser(id: String) {
+        Amplify.API.query(
+            ModelQuery.get(com.amplifyframework.datastore.generated.model.User::class.java, id),
+            { response ->
+                run {
+                    // Create the new user object
+                    val newUser = User()
+                    newUser.id = response.data.id
+                    newUser.createdAt = response.data.createdAt
+                    newUser.updatedAt = response.data.updatedAt
+                    newUser.firstname = response.data.firstname
+                    newUser.lastname = response.data.lastname
+                    newUser.email = response.data.email
+                    newUser.pictureName = response.data.pictureName
+                    newUser.pictureUrl = response.data.pictureUrl
+                    newUser.notification = response.data.notification
+                    newUser.role = response.data.role
+                    newUser.group = response.data.group
+                    newUser.limitedStorage = response.data.limitedStorage
+                    newUser.storageSpaceUsed = response.data.storageSpaceUsed
+                    newUser.totalStorageSpace = response.data.totalStorageSpace
+
+                    // Create the root path
+                    val home = PathItem()
+                    home.id = "-1"
+                    home.name = getString(R.string.home_path)
+                    // Add the home path to the root path and save to RealmDB
+                    Path().apply {
+                        path.add(home)
+                    }.save()
+
+                    // Save the user and the path to RealmDB
+                    newUser.save()
+                    home.save()
+
+                    // Go to the home activity
+                    showHome()
+                }
+            },
+            { error -> Log.e("MyAmplifyApp", "Query failed", error) }
+        )
     }
 
     /**

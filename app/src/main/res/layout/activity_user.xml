@@ -30,13 +30,14 @@
             app:placeholderImage="@drawable/ic_user_circle" />
 
         <TextView
+            android:id="@+id/userName"
             style="@style/TitleUserInfos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/profilePicture"
             android:layout_marginBottom="4dp"
             android:fontFamily="@font/dejavusans"
-            android:text="Jean-Thavorak Phe"
+            android:text="Nom Prénom"
             android:textAlignment="center" />
 
     </RelativeLayout>

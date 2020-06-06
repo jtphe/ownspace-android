@@ -60,7 +60,7 @@
         android:background="@drawable/rounded_login_edit_text"
         android:fontFamily="@font/helveticaneue_light"
         android:hint="@string/placeholderTotp"
-        android:inputType="textPassword"
+        android:inputType="phone"
         android:padding="14dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/newPasswordTextView" />
