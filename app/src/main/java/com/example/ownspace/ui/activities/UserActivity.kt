@@ -1,11 +1,15 @@
 package com.example.ownspace.ui.activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.amazonaws.mobile.client.AWSMobileClient
+import com.amplifyframework.api.graphql.model.ModelQuery
+import com.amplifyframework.core.Amplify
 import com.developer.kalert.KAlertDialog
 import com.example.ownspace.R
 import com.example.ownspace.models.Folder
@@ -13,7 +17,6 @@ import com.example.ownspace.models.Path
 import com.example.ownspace.models.PathItem
 import com.example.ownspace.models.User
 import com.vicpin.krealmextensions.deleteAll
-import com.vicpin.krealmextensions.queryFirst
 import kotlinx.android.synthetic.main.activity_user.*
 import kotlinx.android.synthetic.main.header_with_return.*
 
@@ -26,7 +29,9 @@ class UserActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user)
 
-        emailText.text = User().queryFirst()?.email.toString()
+        getUserFromDB()
+
+        emailText.text = Amplify.Auth.currentUser.username
 
         logoutBtn.setOnClickListener {
             logOut()
@@ -52,6 +57,29 @@ class UserActivity : AppCompatActivity() {
                 )
             )
         }
+
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun getUserFromDB() {
+        val id = Amplify.Auth.currentUser.userId
+        Amplify.API.query(
+            ModelQuery.get(com.amplifyframework.datastore.generated.model.User::class.java, id),
+            { response ->
+                run {
+                    val firstname = response.data.firstname
+                    val lastname = response.data.lastname
+                    if (firstname !== null && lastname !== null && firstname.isNotEmpty() && lastname.isNotEmpty()) {
+                        userName.text = "$lastname $firstname"
+                        lastNameText.text  = lastname
+                        firstNameText.text = firstname
+                    } else {
+                        userName.text = response.data.email
+                    }
+                }
+            },
+            { error -> Log.e("Error getUserFromDB =>", "Query failed", error) }
+        )
 
     }
 

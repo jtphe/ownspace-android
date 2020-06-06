@@ -7,16 +7,14 @@ import android.os.Handler
 import android.util.Log
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
-import com.amazonaws.mobile.client.AWSMobileClient
-import com.amazonaws.mobile.client.Callback
-import com.amazonaws.mobile.client.UserState
-import com.amazonaws.mobile.client.UserStateDetails
+import com.amplifyframework.AmplifyException
+import com.amplifyframework.api.aws.AWSApiPlugin
+import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
+import com.amplifyframework.core.Amplify
+import com.amplifyframework.storage.s3.AWSS3StoragePlugin
 import com.example.ownspace.R
-import com.example.ownspace.models.User
 import com.example.ownspace.ui.showSnackbar
 import com.facebook.drawee.backends.pipeline.Fresco
-import com.vicpin.krealmextensions.queryFirst
-import com.vicpin.krealmextensions.save
 import io.realm.Realm
 
 /**
@@ -42,41 +40,20 @@ class SplashScreenActivity : AppCompatActivity() {
 
 
         //Code to start timer and take action after the timer ends
-        Handler().postDelayed(Runnable {    //Do any action here. Now we are moving to next page
-            AWSMobileClient.getInstance().initialize(
-                applicationContext,
-                object : Callback<UserStateDetails> {
-                    override fun onResult(userStateDetails: UserStateDetails) {
-                        Log.i("INIT", "onResult: " + userStateDetails.userState)
-                        when (userStateDetails.userState) {
-                            UserState.SIGNED_IN -> {
-                                val clientId =
-                                    AWSMobileClient.getInstance().userAttributes["sub"]
-                                        .toString()
-                                val clientEmail =
-                                    AWSMobileClient.getInstance().userAttributes["email"].toString()
-                                val user = User().queryFirst() {
-                                    equalTo(
-                                        "id",
-                                        clientId
-                                    )
-                                }?.id.toString()
+        Handler().postDelayed({
+            try {
+                // Add the AWS plugins
+                Amplify.addPlugin(AWSApiPlugin())
+                Amplify.addPlugin(AWSCognitoAuthPlugin())
+                Amplify.addPlugin(AWSS3StoragePlugin())
+                Amplify.configure(applicationContext)
 
-                                if (user != clientId) {
-                                    // Create the new user object
-                                    val newUser = User()
-                                    newUser.id = clientId
-                                    newUser.email = clientEmail
-                                    // Add the user object to RealmDB
-                                    newUser.save()
-                                    // Go to the home activity
-                                    showHome()
-                                } else {
-                                    // User already present in RealmDB, go to the home activity
-                                    showHome()
-                                }
-                            }
-                            UserState.SIGNED_OUT -> if (intent?.extras?.getBoolean("hasLogOut") == true) {
+                // Check the current auth session
+                Amplify.Auth.fetchAuthSession(
+                    { result ->
+                        // Check if the user is sign in or not
+                        if (!result.isSignedIn) {
+                            if (intent?.extras?.getBoolean("hasLogOut") == true) {
                                 showSnackbar(
                                     findViewById(android.R.id.content),
                                     getString(R.string.toast_logout),
@@ -85,19 +62,15 @@ class SplashScreenActivity : AppCompatActivity() {
                             } else {
                                 showAuthentication()
                             }
-                            else -> showSnackbar(
-                                findViewById(android.R.id.content),
-                                getString(R.string.toast_undefined_state),
-                                false
-                            )
+                        } else {
+                            showHome()
                         }
-                    }
-
-                    override fun onError(e: java.lang.Exception) {
-                        Log.e("INIT", "Initialization error.", e)
-                    }
-                }
-            )
+                    },
+                    { error -> Log.d("Error =>", error.toString()) }
+                )
+            } catch (error: AmplifyException) {
+                Log.e("Error =>", "Could not initialize Amplify", error)
+            }
         }, SPLASH_TIME.toLong())
     }
 

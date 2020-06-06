@@ -1,39 +1,41 @@
 package com.example.ownspace.api
 
+import android.annotation.SuppressLint
 import android.util.Log
-import com.amazonaws.amplify.generated.graphql.CreateFolderMutation
-import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient
-import com.apollographql.apollo.GraphQLCall
-import com.apollographql.apollo.exception.ApolloException
-import type.CreateFolderInput
-import javax.annotation.Nonnull
+import com.amplifyframework.api.graphql.model.ModelMutation
+import com.amplifyframework.core.Amplify
+import com.amplifyframework.datastore.generated.model.Folder
+import com.amplifyframework.storage.StorageAccessLevel
+import com.amplifyframework.storage.options.StorageUploadFileOptions
+import com.example.ownspace.ui.getCurrentPathString
+import java.io.File
 
 
 /**
  * Create the folder
- * @param name String - The folder name
+ * @param folderName String - The folder's name
+ * @param folder File - The folder
  * @param owner String - Owner of the file (by default the creator)
  */
-fun createFolder(name: String, owner: String, mAWSAppSyncClient: AWSAppSyncClient) {
-    val createFolderInput: CreateFolderInput =
-        CreateFolderInput.builder().name(name).owner(owner).build()
-    mAWSAppSyncClient.mutate(
-        CreateFolderMutation.builder().input(createFolderInput).build()
-    )
-        ?.enqueue(mutationCallback);
+@SuppressLint("LongLogTag")
+fun createFolder(folderName: String, folder: File, parent: String, owner: String) {
+    val options = StorageUploadFileOptions.builder().accessLevel(StorageAccessLevel.PRIVATE).build()
+    val currentPathString = getCurrentPathString() + folderName + "/"
+
+    // Create the folder in S3
+    Amplify.Storage.uploadFile(currentPathString,
+        folder,
+        options,
+        { result -> Log.i("Create folder in S3", "Folder created  => " + result.key) },
+        { error -> Log.e("Create folder in S3", "Upload failed", error) })
+
+    // Create the folder in DynamoDB
+    val date = System.currentTimeMillis().toString()
+    val folderDB = Folder.builder().owner(owner).parent(parent).name(folderName).createdAt(date)
+        .updatedAt(date).build()
+
+    Amplify.API.mutate(ModelMutation.create(folderDB),
+        { response -> Log.i("Create folder in DynamoDB", "Folder created => " + response.data.toString()) },
+        { error -> Log.e("Create folder in DynamoDB", "Update failed", error) })
 }
 
-/**
- * Callback of the CreateFolderMutation
- */
-private val mutationCallback: GraphQLCall.Callback<CreateFolderMutation.Data?> =
-    object : GraphQLCall.Callback<CreateFolderMutation.Data?>() {
-        override fun onResponse(response: com.apollographql.apollo.api.Response<CreateFolderMutation.Data?>) {
-            val data = response.data()?.createFolder()
-            Log.d("Folder added =>", data.toString())
-        }
-
-        override fun onFailure(@Nonnull e: ApolloException) {
-            Log.e("Error", e.toString())
-        }
-    }

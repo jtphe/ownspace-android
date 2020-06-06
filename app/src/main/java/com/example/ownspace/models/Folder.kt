@@ -3,7 +3,6 @@ package com.example.ownspace.models
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
-import java.util.*
 
 /**
  * Folder class
@@ -13,6 +12,7 @@ import java.util.*
  * @property name String? - Folder's name
  * @property owner String? - Folder's owner
  * @property sharedList RealmList<User>? - Folder's sharedList
+ * @property isProtected Boolean? - If the folder is protected or not
  * @property password String? - Folder's password
  * @property parent String? - Folder's parent folder
  * @property nbFiles Int? - Number of files in the folder
@@ -20,11 +20,12 @@ import java.util.*
 open class Folder : RealmObject() {
     @PrimaryKey
     var id: String? = null
-    var createdAt: Date? = null
-    var updatedAt: Date? = null
+    var createdAt: String? = null
+    var updatedAt: String? = null
     var name: String? = null
     var owner: String? = null
     var sharedList: RealmList<User>? = null
+    var isProtected: Boolean? = null
     var password: String? = null
     var parent: String? = null
     var nbFiles: Int? = null

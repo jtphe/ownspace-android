@@ -16,6 +16,7 @@ import com.amazonaws.mobile.client.UserState
 import com.amazonaws.mobile.client.UserStateDetails
 import com.amazonaws.mobile.client.results.SignInResult
 import com.amazonaws.mobile.client.results.SignInState
+import com.amplifyframework.core.Amplify
 import com.example.ownspace.R
 import com.example.ownspace.ui.fragments.TotpFragment
 import com.example.ownspace.ui.showSnackbar
@@ -29,37 +30,6 @@ class AuthenticationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication)
-
-        /**
-         * Initialize the user's instance of AWS Amplify
-         */
-        AWSMobileClient.getInstance().initialize(
-            applicationContext,
-            object : Callback<UserStateDetails> {
-                override fun onResult(userStateDetails: UserStateDetails) {
-                    Log.i("INIT", "onResult: " + userStateDetails.userState)
-                    when (userStateDetails.userState) {
-                        UserState.SIGNED_IN -> showHome()
-                        UserState.SIGNED_OUT -> if (intent?.extras?.getBoolean("hasLogOut") == true) {
-                            showSnackbar(
-                                findViewById(android.R.id.content),
-                                getString(R.string.toast_logout),
-                                false
-                            )
-                        }
-                        else -> showSnackbar(
-                            findViewById(android.R.id.content),
-                            getString(R.string.toast_undefined_state),
-                            false
-                        )
-                    }
-                }
-
-                override fun onError(e: java.lang.Exception) {
-                    Log.e("INIT", "Initialization error.", e)
-                }
-            }
-        )
 
         val contactIntent = Intent(Intent.ACTION_SENDTO).setType("message/rfc822")
         val contactUri = Uri.parse("mailto:ownspaceco@gmail.com")
@@ -83,55 +53,21 @@ class AuthenticationActivity : AppCompatActivity() {
             if (username.trim().isEmpty() || password.trim().isEmpty()) {
                 showSnackbar(it, getString(R.string.editText_empty), true)
             } else {
-                AWSMobileClient.getInstance().signIn(
+                Amplify.Auth.signIn(
                     username,
                     password,
-                    null,
-                    object : Callback<SignInResult> {
-                        override fun onResult(signInResult: SignInResult) {
-                            runOnUiThread {
-                                Log.d(
-                                    FragmentActivity::class.java.simpleName,
-                                    "Sign-in callback state: " + signInResult.signInState
-                                )
-                                when (signInResult.signInState) {
-                                    SignInState.DONE -> {
-                                        showHome()
-                                    }
-                                    SignInState.SMS_MFA -> {
-                                        showTotpFragment()
-                                    }
-                                    else -> {
-                                        showSnackbar(
-                                            it,
-                                            getString(R.string.toast_sign_not_confirmed) + signInResult.signInState,
-                                            false
-                                        )
-                                    }
-                                }
-                            }
+                    { result ->
+                        if (result.nextStep.signInStep.toString() == "CONFIRM_SIGN_IN_WITH_SMS_MFA_CODE") {
+                            showTotpFragment()
                         }
-
-                        override fun onError(e: Exception) {
-                            showSnackbar(it, getString(R.string.toast_signin_error), true)
-                            Log.e(FragmentActivity::class.java.simpleName, "Sign-in error", e)
-                        }
-                    })
+                    },
+                    { error ->
+                        showSnackbar(it, getString(R.string.toast_signin_error), true)
+                        Log.e("Error sign in =>", error.toString())
+                    }
+                )
             }
-
         }
-
-    }
-
-    /**
-     * Show the Main Activity
-     */
-    private fun showHome() {
-        val homeIntent = Intent(this, MainActivity::class.java)
-        homeIntent.putExtra("alreadySignIn", false)
-        startActivity(homeIntent)
-        finish()
-        passwordInput.setText("")
     }
 
     /**
