@@ -1,5 +1,6 @@
 package com.example.ownspace.ui.activities
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -41,6 +42,19 @@ import java.io.File
  * The MainActivity class
  */
 class MainActivity : AppCompatActivity() {
+
+    init {
+        instance = this
+    }
+
+    companion object {
+        private var instance: MainActivity? = null
+
+        fun applicationContext() : Context {
+            return instance!!.applicationContext
+        }
+    }
+
 
     private val currentUser = Amplify.Auth.currentUser
 
@@ -208,8 +222,6 @@ class MainActivity : AppCompatActivity() {
                 Folder.OWNER.contains(user).and(Folder.PARENT.contains(parent))
             ),
             { response ->
-                Log.d("before", "folder")
-
                 response.data.also { it ->
                     if (it !== null) {
                         it.forEach {
@@ -241,11 +253,10 @@ class MainActivity : AppCompatActivity() {
                     .and(com.amplifyframework.datastore.generated.model.File.PARENT.contains(parent))
             ),
             { response ->
-                Log.d("before", "file")
-                response.data.also {
+                response.data.also { lol ->
                     GlobalScope.launch {
-                        if (it !== null) {
-                            it.forEach {
+                        if (lol !== null) {
+                            lol.forEach {
                                 val tmpFile = com.example.ownspace.models.File()
                                 tmpFile.id = it.id
                                 tmpFile.createdAt = it.createdAt
@@ -270,7 +281,10 @@ class MainActivity : AppCompatActivity() {
                                     ) as ConstraintLayout
                                     layoutManager = LinearLayoutManager(context)
                                     adapter = GetDocumentsListAdapter(
-                                        documentList
+                                        documentList,
+                                        rootView,
+                                        supportFragmentManager,
+                                        rootView.homeFrameLayout.id
                                     )
                                 }
                             }
@@ -284,7 +298,10 @@ class MainActivity : AppCompatActivity() {
                                     ) as ConstraintLayout
                                     layoutManager = LinearLayoutManager(context)
                                     adapter = GetDocumentsListAdapter(
-                                        documentList
+                                        documentList,
+                                        rootView,
+                                        supportFragmentManager,
+                                        rootView.homeFrameLayout.id
                                     )
                                 }
                             }

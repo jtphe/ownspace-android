@@ -58,7 +58,6 @@ fun getCurrentPathString(): String {
 
 fun openDocument(
     path: String,
-    context: Context,
     view: View,
     supportFragmentManager: FragmentManager,
     homeFrameLayout: Int,
