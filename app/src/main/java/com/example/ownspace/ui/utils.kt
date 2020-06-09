@@ -1,14 +1,10 @@
 package com.example.ownspace.ui
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.FrameLayout
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.ownspace.R
 import com.example.ownspace.models.Path
@@ -44,7 +40,6 @@ fun showSnackbar(context: View, text: String, long: Boolean) {
     }
 }
 
-
 fun getCurrentPathString(): String {
     var path = ""
     val data = Path().queryFirst()!!.path
@@ -63,23 +58,17 @@ fun openDocument(
     homeFrameLayout: Int,
     name: String
 ) {
-    val contentUri: Uri?
     val newPath = "content:/$path"
-    contentUri = Uri.parse(newPath)
-    Log.d("contentUri", contentUri.toString())
-    Log.d("path", path)
+    val contentUri = Uri.parse(newPath)
 
     if (contentUri == null) {
         showSnackbar(view, "Invalid file", true)
         return;
     }
 
-    // Create URI
-
     val intent = Intent(Intent.ACTION_VIEW);
-    // Check what kind of file you are trying to open, by comparing the url with extensions.
-    // When the if condition is matched, plugin sets the correct intent (mime) type,
-    // so Android knew what application to use to open the file
+
+    // Check the type of file
     if (path.contains(".doc") || path.contains(".docx")) {
         // Word document
         intent.setDataAndType(contentUri, "application/msword");
@@ -112,27 +101,23 @@ fun openDocument(
         val bundle = Bundle()
         bundle.putString("title", name)
         bundle.putString("content", File(path).readText())
-        Log.d("name", name)
-        Log.d("content", File(path).readText())
         val fragment = TextViewerFragment()
         fragment.arguments = bundle
-        supportFragmentManager.beginTransaction().replace(homeFrameLayout, fragment).addToBackStack(null).commit()
-
-//        intent.setDataAndType(contentUri, "text/plain");
+        supportFragmentManager.beginTransaction().replace(homeFrameLayout, fragment)
+            .addToBackStack(null).commit()
+        return
     } else if (path.contains(".3gp") || path.contains(".mpg") || path.contains(".mpeg") || path.contains(
             ".mpe"
         ) || path.contains(".mp4") || path.contains(".avi")
     ) {
         // Video files
-        intent.setDataAndType(contentUri, "video/*");
+        intent.setDataAndType(contentUri, "video/*")
     } else {
-        //if you want you can also define the intent type for any other file
-        //additionally use else clause below, to manage other unknown extensions
-        //in this case, Android will show all applications installed on the device
-        //so you can choose which application to use
-        intent.setDataAndType(contentUri, "*/*");
+        intent.setDataAndType(contentUri, "*/*")
     }
 
-//    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//    context.startActivity(intent);
+    if (!path.contains(".txt")) {
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        MainActivity.applicationContext().startActivity(intent)
+    }
 }

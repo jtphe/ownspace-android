@@ -2,6 +2,7 @@ package com.example.ownspace.api
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.view.View
 import com.amplifyframework.api.graphql.model.ModelMutation
 import com.amplifyframework.api.graphql.model.ModelQuery
 import com.amplifyframework.core.Amplify
@@ -10,6 +11,7 @@ import com.amplifyframework.storage.StorageAccessLevel
 import com.amplifyframework.storage.options.StorageUploadFileOptions
 import com.example.ownspace.ui.activities.MainActivity.Companion.documentList
 import com.example.ownspace.ui.getCurrentPathString
+import com.example.ownspace.ui.showSnackbar
 import com.vicpin.krealmextensions.save
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -101,7 +103,7 @@ fun getAllDocuments(user: String, parent: String) {
  * @param owner String - Owner of the file (by default the creator)
  */
 @SuppressLint("LongLogTag")
-fun createFolder(folderName: String, folder: File, parent: String, owner: String) {
+fun createFolder(folderName: String, folder: File, parent: String, owner: String, view: View, successMessage: String) {
     val options = StorageUploadFileOptions.builder().accessLevel(StorageAccessLevel.PRIVATE).build()
     val currentPathString = getCurrentPathString() + folderName + "/"
     // Temporary list
@@ -118,7 +120,7 @@ fun createFolder(folderName: String, folder: File, parent: String, owner: String
         { result -> Log.i("Creating folder in S3", "Folder created  => " + result.key) },
         { error -> Log.e("Creating folder in S3", "Creation failed", error) })
 
-    // Create the folder in DynamoDBx
+    // Create the folder in DynamoDB
     val date = System.currentTimeMillis().toString()
     val folderDB = Folder.builder().owner(owner).parent(parent).name(folderName).createdAt(date)
         .updatedAt(date).isProtected(false).nbFiles(0).build()
@@ -144,13 +146,14 @@ fun createFolder(folderName: String, folder: File, parent: String, owner: String
             newDocumentList.add(tmpFolder)
             // Add to the LiveData
             documentList.postValue(newDocumentList)
-//           "Show snackbar"
+            showSnackbar(view, successMessage, true)
         },
         { error -> Log.e("Creating folder in DynamoDB", "Creation failed", error) })
+    folder.delete()
 }
 
 @SuppressLint("LongLogTag")
-fun uploadFile(file: File, fileName: String, owner: String, parent: String) {
+fun uploadFile(file: File, fileName: String, owner: String, parent: String, view: View, successMessage: String) {
     val options = StorageUploadFileOptions.builder().accessLevel(StorageAccessLevel.PRIVATE).build()
     val currentPathString = getCurrentPathString() + fileName
     //Temporary list
@@ -201,7 +204,7 @@ fun uploadFile(file: File, fileName: String, owner: String, parent: String) {
                     newDocumentList.add(tmpFile)
                     // Add to the LiveData
                     documentList.postValue(newDocumentList)
-//                   "Show snackbar"
+                    showSnackbar(view, successMessage, true)
                 },
                 { error -> Log.e("Creating file in DynamoDB", "Creation failed", error) })
             file.delete()
