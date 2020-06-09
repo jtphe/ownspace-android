@@ -69,7 +69,7 @@
 
 
     <!-- Modal plus menu -->
-    <string name="upload_file">"Importer un fichier"</string>
+    <string name="upload_image">"Importer une image"</string>
     <string name="create_folder">"Créer un dossier"</string>
     <string name="passwordPlaceholder">*******</string>
 
