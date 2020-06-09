@@ -1,7 +1,10 @@
 package com.example.ownspace.ui.activities
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,22 +13,23 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amazonaws.mobile.client.AWSMobileClient
-import com.amplifyframework.api.graphql.model.ModelQuery
 import com.amplifyframework.core.Amplify
-import com.amplifyframework.datastore.generated.model.Folder
 import com.developer.kalert.KAlertDialog
 import com.example.ownspace.R
 import com.example.ownspace.adapter.GetDocumentsListAdapter
 import com.example.ownspace.api.createFolder
+import com.example.ownspace.api.getAllDocuments
+import com.example.ownspace.api.uploadFile
 import com.example.ownspace.models.Path
 import com.example.ownspace.models.User
 import com.example.ownspace.ui.showSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.vicpin.krealmextensions.deleteAll
 import com.vicpin.krealmextensions.queryFirst
-import com.vicpin.krealmextensions.save
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.bottom_valid_cancel.*
@@ -37,6 +41,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.InputStream
+
 
 /**
  * The MainActivity class
@@ -58,18 +64,51 @@ class MainActivity : AppCompatActivity() {
 
     private val currentUser = Amplify.Auth.currentUser
 
+    companion object {
+        // Image pick mode
+        private val IMAGE_PICK_CODE = 1000
+
+        // Permission code
+        private val PERMISSION_CODE = 1001
+
+        val documentList: MutableLiveData<MutableIterable<Any>> by lazy {
+            MutableLiveData<MutableIterable<Any>>()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         changeIconColor(home)
 
+        val documentsObserver = Observer<MutableIterable<Any>>{
+            GlobalScope.launch {
+                                withContext(Dispatchers.Main) {
+                                    recyclerViewDocuments.apply {
+                                        ConstraintLayout.inflate(
+                                            context,
+                                            R.layout.activity_main,
+                                            null
+                                        ) as ConstraintLayout
+                                        layoutManager = LinearLayoutManager(context)
+                                        adapter = GetDocumentsListAdapter(
+                                            it
+                                        )
+                                    }
+                                }
+                            }
+        }
+
+        documentList.observe(this, documentsObserver)
+
         // Load all the document of the current path
         val currentPath = Path().queryFirst()!!.path
-        currentPath[currentPath.size - 1]!!.id?.let {
-            getAllDocuments(
+        currentPath[currentPath.size - 1]!!.id?.let { id ->
+           getAllDocuments(
                 currentUser.userId,
-                it
+                id
             )
+
         }
 
         if (AWSMobileClient.getInstance().isSignedIn) {
@@ -99,7 +138,17 @@ class MainActivity : AppCompatActivity() {
             )
 
             bottomSheetView.importFileLayout.setOnClickListener {
-                Log.d("Import", "File")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    // If permission denied
+                    if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                        val permissions = arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                        requestPermissions(permissions, PERMISSION_CODE)
+                    } else {
+                        pickImageFromGallery()
+                    }
+                } else {
+                    pickImageFromGallery()
+                }
                 bottomSheetDialog.dismiss()
             }
 
@@ -138,12 +187,6 @@ class MainActivity : AppCompatActivity() {
                             currentUser.userId
                         )
                         createFolderDialog.dismiss()
-                        currentPath[currentPath.size - 1]!!.id?.let {
-                            getAllDocuments(
-                                currentUser.userId,
-                                it
-                            )
-                        }
                         changeIconColor(home)
                     } else {
                         showSnackbar(
@@ -168,6 +211,55 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun pickImageFromGallery() {
+        // Intent to pick image
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, IMAGE_PICK_CODE)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            PERMISSION_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission from pop up granted
+                    pickImageFromGallery()
+                } else {
+                    TODO("Show snackbar")
+                }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
+            val image = data?.data?.path ?: return
+            val inputStream: InputStream? =
+                contentResolver.openInputStream(data.data!!)
+
+            // Split the path
+            val delimiter = "/"
+            val parts = image.split(delimiter)
+            // Get the file name
+            val fileName = parts.last()
+            // Get data for DB
+            val currentPath = Path().queryFirst()!!.path
+            val parent: String = currentPath[currentPath.size - 1]?.id.toString()
+
+            val file = File(cacheDir, fileName)
+            // Create tmp file
+            file.createNewFile()
+            file.outputStream().use {
+                inputStream?.copyTo(it)
+            }
+            uploadFile(file, fileName, currentUser.userId, parent)
+        }
+    }
 
     /**
      * Change the color of the icon selected
@@ -207,115 +299,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Get all the folders from the DataBase
-     * @param user String - The user's id
-     * @param parent String - The id of the parent folder in which the user is located
-     */
-    private fun getAllDocuments(user: String, parent: String) {
-        // Create the list that will contain all the documents
-        val documentList: MutableList<Any> = mutableListOf()
-
-        // Request to get all the folders
-        Amplify.API.query(
-            ModelQuery.list(
-                Folder::class.java,
-                Folder.OWNER.contains(user).and(Folder.PARENT.contains(parent))
-            ),
-            { response ->
-                response.data.also { it ->
-                    if (it !== null) {
-                        it.forEach {
-                            val tmpFolder = com.example.ownspace.models.Folder()
-                            tmpFolder.id = it.id
-                            tmpFolder.createdAt = it.createdAt
-                            tmpFolder.updatedAt = it.updatedAt
-                            tmpFolder.name = it.name
-                            tmpFolder.owner = it.owner
-                            tmpFolder.isProtected = it.isProtected
-                            tmpFolder.parent = it.parent
-                            tmpFolder.nbFiles = it.nbFiles
-                            tmpFolder.save()
-                            documentList.add(tmpFolder)
-                        }
-                    }
-                }
-            },
-            { error ->
-                Log.e("Error =>", error.toString())
-            }
-        )
-
-        // Request to get all the files
-        Amplify.API.query(
-            ModelQuery.list(
-                com.amplifyframework.datastore.generated.model.File::class.java,
-                com.amplifyframework.datastore.generated.model.File.OWNER.contains(user)
-                    .and(com.amplifyframework.datastore.generated.model.File.PARENT.contains(parent))
-            ),
-            { response ->
-                response.data.also { lol ->
-                    GlobalScope.launch {
-                        if (lol !== null) {
-                            lol.forEach {
-                                val tmpFile = com.example.ownspace.models.File()
-                                tmpFile.id = it.id
-                                tmpFile.createdAt = it.createdAt
-                                tmpFile.updatedAt = it.updatedAt
-                                tmpFile.name = it.name
-                                tmpFile.content = it.content
-                                tmpFile.owner = it.owner
-                                tmpFile.isProtected = it.isProtected
-                                tmpFile.parent = it.parent
-                                tmpFile.size = it.size
-                                tmpFile.mimeType = it.mimeType
-                                tmpFile.type = it.type
-                                tmpFile.save()
-                                documentList.add(tmpFile)
-                            }
-                            withContext(Dispatchers.Main) {
-                                recyclerViewDocuments.apply {
-                                    ConstraintLayout.inflate(
-                                        context,
-                                        R.layout.activity_main,
-                                        null
-                                    ) as ConstraintLayout
-                                    layoutManager = LinearLayoutManager(context)
-                                    adapter = GetDocumentsListAdapter(
-                                        documentList,
-                                        rootView,
-                                        supportFragmentManager,
-                                        rootView.homeFrameLayout.id
-                                    )
-                                }
-                            }
-                        } else if (documentList.isNotEmpty()) {
-                            withContext(Dispatchers.Main) {
-                                recyclerViewDocuments.apply {
-                                    ConstraintLayout.inflate(
-                                        context,
-                                        R.layout.activity_main,
-                                        null
-                                    ) as ConstraintLayout
-                                    layoutManager = LinearLayoutManager(context)
-                                    adapter = GetDocumentsListAdapter(
-                                        documentList,
-                                        rootView,
-                                        supportFragmentManager,
-                                        rootView.homeFrameLayout.id
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            { error ->
-                Log.e("Error =>", error.toString())
-            }
-        )
-    }
-
-    /**
      * Sign out of the application
      */
     private fun logOut() {
@@ -340,4 +323,3 @@ class MainActivity : AppCompatActivity() {
     }
 
 }
-
