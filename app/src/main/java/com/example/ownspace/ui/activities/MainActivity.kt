@@ -53,15 +53,6 @@ class MainActivity : AppCompatActivity() {
         instance = this
     }
 
-    companion object {
-        private var instance: MainActivity? = null
-
-        fun applicationContext() : Context {
-            return instance!!.applicationContext
-        }
-    }
-
-
     private val currentUser = Amplify.Auth.currentUser
 
     companion object {
@@ -74,6 +65,12 @@ class MainActivity : AppCompatActivity() {
         val documentList: MutableLiveData<MutableIterable<Any>> by lazy {
             MutableLiveData<MutableIterable<Any>>()
         }
+
+        private var instance: MainActivity? = null
+
+        fun applicationContext(): Context {
+            return instance!!.applicationContext
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,22 +78,25 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         changeIconColor(home)
 
-        val documentsObserver = Observer<MutableIterable<Any>>{
+        val documentsObserver = Observer<MutableIterable<Any>> {
             GlobalScope.launch {
-                                withContext(Dispatchers.Main) {
-                                    recyclerViewDocuments.apply {
-                                        ConstraintLayout.inflate(
-                                            context,
-                                            R.layout.activity_main,
-                                            null
-                                        ) as ConstraintLayout
-                                        layoutManager = LinearLayoutManager(context)
-                                        adapter = GetDocumentsListAdapter(
-                                            it
-                                        )
-                                    }
-                                }
-                            }
+                withContext(Dispatchers.Main) {
+                    recyclerViewDocuments.apply {
+                        ConstraintLayout.inflate(
+                            context,
+                            R.layout.activity_main,
+                            null
+                        ) as ConstraintLayout
+                        layoutManager = LinearLayoutManager(context)
+                        adapter = GetDocumentsListAdapter(
+                            it,
+                            rootView,
+                            supportFragmentManager,
+                            rootView.homeFrameLayout.id
+                        )
+                    }
+                }
+            }
         }
 
         documentList.observe(this, documentsObserver)
@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
         // Load all the document of the current path
         val currentPath = Path().queryFirst()!!.path
         currentPath[currentPath.size - 1]!!.id?.let { id ->
-           getAllDocuments(
+            getAllDocuments(
                 currentUser.userId,
                 id
             )
@@ -184,7 +184,9 @@ class MainActivity : AppCompatActivity() {
                             folderName,
                             folder,
                             parent,
-                            currentUser.userId
+                            currentUser.userId,
+                            findViewById(android.R.id.content),
+                            getString(R.string.toast_folder_created)
                         )
                         createFolderDialog.dismiss()
                         changeIconColor(home)
@@ -229,7 +231,10 @@ class MainActivity : AppCompatActivity() {
                     // Permission from pop up granted
                     pickImageFromGallery()
                 } else {
-                    TODO("Show snackbar")
+                    showSnackbar(
+                        findViewById(android.R.id.content),
+                        getString(R.string.toast_permissions_not_granted), true
+                    )
                 }
             }
         }
@@ -257,7 +262,14 @@ class MainActivity : AppCompatActivity() {
             file.outputStream().use {
                 inputStream?.copyTo(it)
             }
-            uploadFile(file, fileName, currentUser.userId, parent)
+            uploadFile(
+                file,
+                fileName,
+                currentUser.userId,
+                parent,
+                findViewById(android.R.id.content),
+                getString(R.string.toast_file_created)
+            )
         }
     }
 

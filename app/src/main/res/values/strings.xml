@@ -63,6 +63,9 @@
     <string name="toast_invalid_token">"Token invalide"</string>
     <string name="toast_create_folder_not_null">"Le nom du dossier ne peut pas être vide et doit avoir au moins 3 caractères"</string>
     <string name="toast_undefined_state">"Status utilisateur inconnu"</string>
+    <string name="toast_file_created">"Fichier créé"</string>
+    <string name="toast_folder_created">"Dossier créé"</string>
+    <string name="toast_permissions_not_granted">"Veuillez accorder les permissions nécessaires"</string>
 
     <!-- Mail string -->
     <string name="mailto">"mailto:ownspaceco@gmail.com"</string>
@@ -79,8 +82,7 @@
     <!-- Path -->
     <string name="home_path">"Home"</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Text fragment -->
     <string name="fileNameTitle">Titre</string>
     <string name="fileNameContent">Contenu</string>
 
