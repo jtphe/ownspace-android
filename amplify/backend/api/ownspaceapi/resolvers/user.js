@@ -9,16 +9,30 @@ API.configure(awsconfig);
 
 const user = {
   Mutation: {
-    createUser: async ({ id, email, password, role }) => {
+    createUser: async ({
+      id,
+      identityId,
+      email,
+      password,
+      role,
+      group,
+      createdAt,
+      updatedAt
+    }) => {
       const cryptedPassword = await PasswordManager.hashPassword(password);
-      const query = `mutation createUser($id: ID! $email: String! $password: String! $role: String!) {
+      const query = `mutation createUser($id: ID! $identityId: String! $email: String! $password: String! $role: String! $group: ID! $createdAt: String! $updatedAt: String!) {
             createUser(input:{
                   id:$id
+                  identityId:$identityId
                   email:$email
                   password:$password
                   role:$role
+                  group:$group
+                  createdAt:$createdAt
+                  updatedAt:$updatedAt
                 }){
                     id,
+                    identityId,
                     firstname,
                     lastname,
                     email,
@@ -33,7 +47,16 @@ const user = {
                 }
               }`;
       const res = await API.graphql(
-        graphqlOperation(query, { id, email, password: cryptedPassword, role })
+        graphqlOperation(query, {
+          id,
+          identityId,
+          email,
+          password: cryptedPassword,
+          role,
+          group,
+          createdAt,
+          updatedAt
+        })
       );
       return res.data.createUser;
     },
@@ -61,7 +84,6 @@ const user = {
       return res.data.updateUser;
     },
     updateUserPwdDB: async ({ id, password, updatedAt }) => {
-      console.log('updatedAt', updatedAt);
       const cryptedPassword = await PasswordManager.hashPassword(password);
       const query = `mutation updateUser($id: ID! $password: String! $updatedAt: String!) {
         updateUser(input:{
@@ -100,6 +122,7 @@ const user = {
       const query = `query getUser($id: ID!){
         getUser(id:$id){
           id
+          identityId
           firstname
           lastname
           email
@@ -156,6 +179,15 @@ const user = {
         }`;
       const res = await API.graphql(graphqlOperation(query, { email }));
       return res.data.listUsers;
+    },
+    getIdentityId: async ({ id }) => {
+      const query = `query getIdentityId($id: ID!){
+        getUser(id:$id){
+          identityId
+        }
+      }`;
+      const res = await API.graphql(graphqlOperation(query, { id }));
+      return res.data.getUser;
     }
   }
 };

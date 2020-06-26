@@ -20,17 +20,37 @@ import static com.amplifyframework.core.model.query.predicate.QueryField.field;
 @ModelConfig(pluralName = "Rights")
 public final class Right implements Model {
   public static final QueryField ID = field("id");
+  public static final QueryField CREATED_AT = field("createdAt");
+  public static final QueryField UPDATED_AT = field("updatedAt");
   public static final QueryField READ = field("read");
   public static final QueryField EDIT = field("edit");
-  public static final QueryField DOCUMENT_ID = field("documentId");
+  public static final QueryField DOCUMENT = field("document");
   public static final QueryField USER = field("user");
+  public static final QueryField FIRSTNAME = field("firstname");
+  public static final QueryField LASTNAME = field("lastname");
+  public static final QueryField EMAIL = field("email");
+  public static final QueryField TYPE = field("type");
   private final @ModelField(targetType="ID", isRequired = true) String id;
+  private final @ModelField(targetType="String") String createdAt;
+  private final @ModelField(targetType="String") String updatedAt;
   private final @ModelField(targetType="Boolean", isRequired = true) Boolean read;
   private final @ModelField(targetType="Boolean", isRequired = true) Boolean edit;
-  private final @ModelField(targetType="ID", isRequired = true) String documentId;
+  private final @ModelField(targetType="ID", isRequired = true) String document;
   private final @ModelField(targetType="ID", isRequired = true) String user;
+  private final @ModelField(targetType="String") String firstname;
+  private final @ModelField(targetType="String") String lastname;
+  private final @ModelField(targetType="String") String email;
+  private final @ModelField(targetType="String", isRequired = true) String type;
   public String getId() {
       return id;
+  }
+  
+  public String getCreatedAt() {
+      return createdAt;
+  }
+  
+  public String getUpdatedAt() {
+      return updatedAt;
   }
   
   public Boolean getRead() {
@@ -41,20 +61,42 @@ public final class Right implements Model {
       return edit;
   }
   
-  public String getDocumentId() {
-      return documentId;
+  public String getDocument() {
+      return document;
   }
   
   public String getUser() {
       return user;
   }
   
-  private Right(String id, Boolean read, Boolean edit, String documentId, String user) {
+  public String getFirstname() {
+      return firstname;
+  }
+  
+  public String getLastname() {
+      return lastname;
+  }
+  
+  public String getEmail() {
+      return email;
+  }
+  
+  public String getType() {
+      return type;
+  }
+  
+  private Right(String id, String createdAt, String updatedAt, Boolean read, Boolean edit, String document, String user, String firstname, String lastname, String email, String type) {
     this.id = id;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
     this.read = read;
     this.edit = edit;
-    this.documentId = documentId;
+    this.document = document;
     this.user = user;
+    this.firstname = firstname;
+    this.lastname = lastname;
+    this.email = email;
+    this.type = type;
   }
   
   @Override
@@ -66,10 +108,16 @@ public final class Right implements Model {
       } else {
       Right right = (Right) obj;
       return ObjectsCompat.equals(getId(), right.getId()) &&
+              ObjectsCompat.equals(getCreatedAt(), right.getCreatedAt()) &&
+              ObjectsCompat.equals(getUpdatedAt(), right.getUpdatedAt()) &&
               ObjectsCompat.equals(getRead(), right.getRead()) &&
               ObjectsCompat.equals(getEdit(), right.getEdit()) &&
-              ObjectsCompat.equals(getDocumentId(), right.getDocumentId()) &&
-              ObjectsCompat.equals(getUser(), right.getUser());
+              ObjectsCompat.equals(getDocument(), right.getDocument()) &&
+              ObjectsCompat.equals(getUser(), right.getUser()) &&
+              ObjectsCompat.equals(getFirstname(), right.getFirstname()) &&
+              ObjectsCompat.equals(getLastname(), right.getLastname()) &&
+              ObjectsCompat.equals(getEmail(), right.getEmail()) &&
+              ObjectsCompat.equals(getType(), right.getType());
       }
   }
   
@@ -77,10 +125,16 @@ public final class Right implements Model {
    public int hashCode() {
     return new StringBuilder()
       .append(getId())
+      .append(getCreatedAt())
+      .append(getUpdatedAt())
       .append(getRead())
       .append(getEdit())
-      .append(getDocumentId())
+      .append(getDocument())
       .append(getUser())
+      .append(getFirstname())
+      .append(getLastname())
+      .append(getEmail())
+      .append(getType())
       .toString()
       .hashCode();
   }
@@ -113,16 +167,28 @@ public final class Right implements Model {
       null,
       null,
       null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
       null
     );
   }
   
   public CopyOfBuilder copyOfBuilder() {
     return new CopyOfBuilder(id,
+      createdAt,
+      updatedAt,
       read,
       edit,
-      documentId,
-      user);
+      document,
+      user,
+      firstname,
+      lastname,
+      email,
+      type);
   }
   public interface ReadStep {
     EditStep read(Boolean read);
@@ -130,42 +196,64 @@ public final class Right implements Model {
   
 
   public interface EditStep {
-    DocumentIdStep edit(Boolean edit);
+    DocumentStep edit(Boolean edit);
   }
   
 
-  public interface DocumentIdStep {
-    UserStep documentId(String documentId);
+  public interface DocumentStep {
+    UserStep document(String document);
   }
   
 
   public interface UserStep {
-    BuildStep user(String user);
+    TypeStep user(String user);
+  }
+  
+
+  public interface TypeStep {
+    BuildStep type(String type);
   }
   
 
   public interface BuildStep {
     Right build();
     BuildStep id(String id) throws IllegalArgumentException;
+    BuildStep createdAt(String createdAt);
+    BuildStep updatedAt(String updatedAt);
+    BuildStep firstname(String firstname);
+    BuildStep lastname(String lastname);
+    BuildStep email(String email);
   }
   
 
-  public static class Builder implements ReadStep, EditStep, DocumentIdStep, UserStep, BuildStep {
+  public static class Builder implements ReadStep, EditStep, DocumentStep, UserStep, TypeStep, BuildStep {
     private String id;
     private Boolean read;
     private Boolean edit;
-    private String documentId;
+    private String document;
     private String user;
+    private String type;
+    private String createdAt;
+    private String updatedAt;
+    private String firstname;
+    private String lastname;
+    private String email;
     @Override
      public Right build() {
         String id = this.id != null ? this.id : UUID.randomUUID().toString();
         
         return new Right(
           id,
+          createdAt,
+          updatedAt,
           read,
           edit,
-          documentId,
-          user);
+          document,
+          user,
+          firstname,
+          lastname,
+          email,
+          type);
     }
     
     @Override
@@ -176,23 +264,60 @@ public final class Right implements Model {
     }
     
     @Override
-     public DocumentIdStep edit(Boolean edit) {
+     public DocumentStep edit(Boolean edit) {
         Objects.requireNonNull(edit);
         this.edit = edit;
         return this;
     }
     
     @Override
-     public UserStep documentId(String documentId) {
-        Objects.requireNonNull(documentId);
-        this.documentId = documentId;
+     public UserStep document(String document) {
+        Objects.requireNonNull(document);
+        this.document = document;
         return this;
     }
     
     @Override
-     public BuildStep user(String user) {
+     public TypeStep user(String user) {
         Objects.requireNonNull(user);
         this.user = user;
+        return this;
+    }
+    
+    @Override
+     public BuildStep type(String type) {
+        Objects.requireNonNull(type);
+        this.type = type;
+        return this;
+    }
+    
+    @Override
+     public BuildStep createdAt(String createdAt) {
+        this.createdAt = createdAt;
+        return this;
+    }
+    
+    @Override
+     public BuildStep updatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+        return this;
+    }
+    
+    @Override
+     public BuildStep firstname(String firstname) {
+        this.firstname = firstname;
+        return this;
+    }
+    
+    @Override
+     public BuildStep lastname(String lastname) {
+        this.lastname = lastname;
+        return this;
+    }
+    
+    @Override
+     public BuildStep email(String email) {
+        this.email = email;
         return this;
     }
     
@@ -219,12 +344,18 @@ public final class Right implements Model {
   
 
   public final class CopyOfBuilder extends Builder {
-    private CopyOfBuilder(String id, Boolean read, Boolean edit, String documentId, String user) {
+    private CopyOfBuilder(String id, String createdAt, String updatedAt, Boolean read, Boolean edit, String document, String user, String firstname, String lastname, String email, String type) {
       super.id(id);
       super.read(read)
         .edit(edit)
-        .documentId(documentId)
-        .user(user);
+        .document(document)
+        .user(user)
+        .type(type)
+        .createdAt(createdAt)
+        .updatedAt(updatedAt)
+        .firstname(firstname)
+        .lastname(lastname)
+        .email(email);
     }
     
     @Override
@@ -238,13 +369,43 @@ public final class Right implements Model {
     }
     
     @Override
-     public CopyOfBuilder documentId(String documentId) {
-      return (CopyOfBuilder) super.documentId(documentId);
+     public CopyOfBuilder document(String document) {
+      return (CopyOfBuilder) super.document(document);
     }
     
     @Override
      public CopyOfBuilder user(String user) {
       return (CopyOfBuilder) super.user(user);
+    }
+    
+    @Override
+     public CopyOfBuilder type(String type) {
+      return (CopyOfBuilder) super.type(type);
+    }
+    
+    @Override
+     public CopyOfBuilder createdAt(String createdAt) {
+      return (CopyOfBuilder) super.createdAt(createdAt);
+    }
+    
+    @Override
+     public CopyOfBuilder updatedAt(String updatedAt) {
+      return (CopyOfBuilder) super.updatedAt(updatedAt);
+    }
+    
+    @Override
+     public CopyOfBuilder firstname(String firstname) {
+      return (CopyOfBuilder) super.firstname(firstname);
+    }
+    
+    @Override
+     public CopyOfBuilder lastname(String lastname) {
+      return (CopyOfBuilder) super.lastname(lastname);
+    }
+    
+    @Override
+     public CopyOfBuilder email(String email) {
+      return (CopyOfBuilder) super.email(email);
     }
   }
   

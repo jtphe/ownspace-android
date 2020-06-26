@@ -104,7 +104,7 @@ fun getAllDocuments(user: String, parent: String) {
  */
 @SuppressLint("LongLogTag")
 fun createFolder(folderName: String, folder: File, parent: String, owner: String, view: View, successMessage: String) {
-    val options = StorageUploadFileOptions.builder().accessLevel(StorageAccessLevel.PRIVATE).build()
+    val options = StorageUploadFileOptions.builder().accessLevel(StorageAccessLevel.PROTECTED).build()
     val currentPathString = getCurrentPathString() + folderName + "/"
     // Temporary list
     val newDocumentList = mutableListOf<Any>()
@@ -154,7 +154,7 @@ fun createFolder(folderName: String, folder: File, parent: String, owner: String
 
 @SuppressLint("LongLogTag")
 fun uploadFile(file: File, fileName: String, owner: String, parent: String, view: View, successMessage: String) {
-    val options = StorageUploadFileOptions.builder().accessLevel(StorageAccessLevel.PRIVATE).build()
+    val options = StorageUploadFileOptions.builder().accessLevel(StorageAccessLevel.PROTECTED).build()
     val currentPathString = getCurrentPathString() + fileName
     //Temporary list
     val newDocumentList = mutableListOf<Any>()

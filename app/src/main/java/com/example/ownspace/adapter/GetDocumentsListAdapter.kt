@@ -76,14 +76,19 @@ class GetDocumentsListAdapter(
             view.documentName.text = file.name
             view.documentIcon.setImageResource(R.drawable.ic_file)
             view.documentRow.setOnClickListener {
-                file.name?.let { fileName -> downloadFile(fileName, getCurrentPathString()) }
+                file.name?.let { fileName ->
+                    downloadFile(
+                        fileName,
+                        getCurrentPathString()
+                    )
+                }
             }
         }
     }
 
     private fun downloadFile(name: String, currentPath: String) {
         val options = StorageDownloadFileOptions.builder()
-            .accessLevel(StorageAccessLevel.PRIVATE)
+            .accessLevel(StorageAccessLevel.PROTECTED)
             .build()
         val context = MainActivity.applicationContext()
 

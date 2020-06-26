@@ -20,6 +20,7 @@ import static com.amplifyframework.core.model.query.predicate.QueryField.field;
 @ModelConfig(pluralName = "Users")
 public final class User implements Model {
   public static final QueryField ID = field("id");
+  public static final QueryField IDENTITY_ID = field("identityId");
   public static final QueryField CREATED_AT = field("createdAt");
   public static final QueryField UPDATED_AT = field("updatedAt");
   public static final QueryField FIRSTNAME = field("firstname");
@@ -35,6 +36,7 @@ public final class User implements Model {
   public static final QueryField STORAGE_SPACE_USED = field("storageSpaceUsed");
   public static final QueryField TOTAL_STORAGE_SPACE = field("totalStorageSpace");
   private final @ModelField(targetType="ID", isRequired = true) String id;
+  private final @ModelField(targetType="String", isRequired = true) String identityId;
   private final @ModelField(targetType="String") String createdAt;
   private final @ModelField(targetType="String") String updatedAt;
   private final @ModelField(targetType="String") String firstname;
@@ -51,6 +53,10 @@ public final class User implements Model {
   private final @ModelField(targetType="Float") Float totalStorageSpace;
   public String getId() {
       return id;
+  }
+  
+  public String getIdentityId() {
+      return identityId;
   }
   
   public String getCreatedAt() {
@@ -109,8 +115,9 @@ public final class User implements Model {
       return totalStorageSpace;
   }
   
-  private User(String id, String createdAt, String updatedAt, String firstname, String lastname, String email, String password, String pictureName, String pictureUrl, Boolean notification, String role, String group, Boolean limitedStorage, Float storageSpaceUsed, Float totalStorageSpace) {
+  private User(String id, String identityId, String createdAt, String updatedAt, String firstname, String lastname, String email, String password, String pictureName, String pictureUrl, Boolean notification, String role, String group, Boolean limitedStorage, Float storageSpaceUsed, Float totalStorageSpace) {
     this.id = id;
+    this.identityId = identityId;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.firstname = firstname;
@@ -136,6 +143,7 @@ public final class User implements Model {
       } else {
       User user = (User) obj;
       return ObjectsCompat.equals(getId(), user.getId()) &&
+              ObjectsCompat.equals(getIdentityId(), user.getIdentityId()) &&
               ObjectsCompat.equals(getCreatedAt(), user.getCreatedAt()) &&
               ObjectsCompat.equals(getUpdatedAt(), user.getUpdatedAt()) &&
               ObjectsCompat.equals(getFirstname(), user.getFirstname()) &&
@@ -157,6 +165,7 @@ public final class User implements Model {
    public int hashCode() {
     return new StringBuilder()
       .append(getId())
+      .append(getIdentityId())
       .append(getCreatedAt())
       .append(getUpdatedAt())
       .append(getFirstname())
@@ -175,7 +184,7 @@ public final class User implements Model {
       .hashCode();
   }
   
-  public static EmailStep builder() {
+  public static IdentityIdStep builder() {
       return new Builder();
   }
   
@@ -213,12 +222,14 @@ public final class User implements Model {
       null,
       null,
       null,
+      null,
       null
     );
   }
   
   public CopyOfBuilder copyOfBuilder() {
     return new CopyOfBuilder(id,
+      identityId,
       createdAt,
       updatedAt,
       firstname,
@@ -234,6 +245,11 @@ public final class User implements Model {
       storageSpaceUsed,
       totalStorageSpace);
   }
+  public interface IdentityIdStep {
+    EmailStep identityId(String identityId);
+  }
+  
+
   public interface EmailStep {
     PasswordStep email(String email);
   }
@@ -266,8 +282,9 @@ public final class User implements Model {
   }
   
 
-  public static class Builder implements EmailStep, PasswordStep, RoleStep, BuildStep {
+  public static class Builder implements IdentityIdStep, EmailStep, PasswordStep, RoleStep, BuildStep {
     private String id;
+    private String identityId;
     private String email;
     private String password;
     private String role;
@@ -288,6 +305,7 @@ public final class User implements Model {
         
         return new User(
           id,
+          identityId,
           createdAt,
           updatedAt,
           firstname,
@@ -302,6 +320,13 @@ public final class User implements Model {
           limitedStorage,
           storageSpaceUsed,
           totalStorageSpace);
+    }
+    
+    @Override
+     public EmailStep identityId(String identityId) {
+        Objects.requireNonNull(identityId);
+        this.identityId = identityId;
+        return this;
     }
     
     @Override
@@ -414,9 +439,10 @@ public final class User implements Model {
   
 
   public final class CopyOfBuilder extends Builder {
-    private CopyOfBuilder(String id, String createdAt, String updatedAt, String firstname, String lastname, String email, String password, String pictureName, String pictureUrl, Boolean notification, String role, String group, Boolean limitedStorage, Float storageSpaceUsed, Float totalStorageSpace) {
+    private CopyOfBuilder(String id, String identityId, String createdAt, String updatedAt, String firstname, String lastname, String email, String password, String pictureName, String pictureUrl, Boolean notification, String role, String group, Boolean limitedStorage, Float storageSpaceUsed, Float totalStorageSpace) {
       super.id(id);
-      super.email(email)
+      super.identityId(identityId)
+        .email(email)
         .password(password)
         .role(role)
         .createdAt(createdAt)
@@ -430,6 +456,11 @@ public final class User implements Model {
         .limitedStorage(limitedStorage)
         .storageSpaceUsed(storageSpaceUsed)
         .totalStorageSpace(totalStorageSpace);
+    }
+    
+    @Override
+     public CopyOfBuilder identityId(String identityId) {
+      return (CopyOfBuilder) super.identityId(identityId);
     }
     
     @Override
