@@ -125,6 +125,9 @@ class MainActivity : AppCompatActivity() {
 
         home.setOnClickListener {
             changeIconColor(home)
+            val homeIntent = Intent(this, MainActivity::class.java)
+            this.startActivity(homeIntent)
+            finish()
         }
 
         plus.setOnClickListener {
@@ -213,6 +216,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Pick an image from the phone gallery
+     */
     private fun pickImageFromGallery() {
         // Intent to pick image
         val intent = Intent(Intent.ACTION_PICK)
@@ -220,6 +226,12 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, IMAGE_PICK_CODE)
     }
 
+    /**
+     * When the application gets the permission granted by the user
+     * @param requestCode Int - The request code
+     * @param permissions Array<out String> - The list of permissions
+     * @param grantResults IntArray - The results granted for the app
+     */
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -251,13 +263,13 @@ class MainActivity : AppCompatActivity() {
             val delimiter = "/"
             val parts = image.split(delimiter)
             // Get the file name
-            val fileName = parts.last()
+            val fileName = parts.last() + ".jpg"
             // Get data for DB
             val currentPath = Path().queryFirst()!!.path
             val parent: String = currentPath[currentPath.size - 1]?.id.toString()
 
-            val file = File(cacheDir, fileName)
             // Create tmp file
+            val file = File(cacheDir, fileName)
             file.createNewFile()
             file.outputStream().use {
                 inputStream?.copyTo(it)

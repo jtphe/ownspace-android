@@ -78,6 +78,7 @@
 
     <!-- Icons description -->
     <string name="icon">"Icon"</string>
+    <string name="image_icon">"Image icon"</string>
 
     <!-- Path -->
     <string name="home_path">"Home"</string>
@@ -85,5 +86,10 @@
     <!-- Text fragment -->
     <string name="fileNameTitle">Titre</string>
     <string name="fileNameContent">Contenu</string>
+
+    <!-- PDF fragment -->
+    <string name="pageError">Erreur lors du chargement du pdf</string>
+    <string name="pdfError">Erreur lors du chargement de la page pdf</string>
+
 
 </resources>

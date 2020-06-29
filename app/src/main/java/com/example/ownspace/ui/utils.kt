@@ -1,15 +1,15 @@
 package com.example.ownspace.ui
 
-import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.commit
 import com.example.ownspace.R
 import com.example.ownspace.models.Path
-import com.example.ownspace.ui.activities.MainActivity
+import com.example.ownspace.ui.fragments.ImageFragment
+import com.example.ownspace.ui.fragments.PdfFragment
 import com.example.ownspace.ui.fragments.TextViewerFragment
 import com.google.android.material.snackbar.Snackbar
 import com.vicpin.krealmextensions.queryFirst
@@ -41,6 +41,10 @@ fun showSnackbar(context: View, text: String, long: Boolean) {
     }
 }
 
+/**
+ * Get the current path
+ * @return String - The current path
+ */
 fun getCurrentPathString(): String {
     var path = ""
     val data = Path().queryFirst()!!.path
@@ -52,6 +56,14 @@ fun getCurrentPathString(): String {
     return path
 }
 
+/**
+ * Open the document
+ * @param path String - The document's path
+ * @param view View - The current view
+ * @param supportFragmentManager FragmentManager - The fragment manager
+ * @param homeFrameLayout Int - The id of the homeFrameLayout
+ * @param name String - The document's name
+ */
 fun openDocument(
     path: String,
     view: View,
@@ -63,62 +75,76 @@ fun openDocument(
     val contentUri = Uri.parse(newPath)
 
     if (contentUri == null) {
-        showSnackbar(view, "Invalid file", true)
+        showSnackbar(view, "Fichier invalide", true)
         return;
     }
 
-    val intent = Intent(Intent.ACTION_VIEW);
-
     // Check the type of file
     if (path.contains(".doc") || path.contains(".docx")) {
-        // Word document
-        intent.setDataAndType(contentUri, "application/msword");
+        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
     } else if (path.contains(".pdf")) {
         // PDF file
-        intent.setDataAndType(contentUri, "application/pdf");
+
+        // Pass the data needed in a bundle
+        val bundle = Bundle()
+        bundle.putString("path", newPath)
+        // Retrieve the pdf fragment
+        val fragment = PdfFragment()
+        fragment.arguments = bundle
+        // Replace the home fragment with the image fragment
+        supportFragmentManager.commit {
+            replace(homeFrameLayout, fragment)
+            addToBackStack(null)
+        }
+        return
     } else if (path.contains(".ppt") || path.contains(".pptx")) {
-        // Powerpoint file
-        intent.setDataAndType(contentUri, "application/vnd.ms-powerpoint");
+        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
     } else if (path.contains(".xls") || path.contains(".xlsx")) {
-        // Excel file
-        intent.setDataAndType(contentUri, "application/vnd.ms-excel");
+        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
     } else if (path.contains(".zip") || path.contains(".rar")) {
-        // ZIP file
-        intent.setDataAndType(contentUri, "application/zip");
+        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
     } else if (path.contains(".rtf")) {
-        // RTF file
-        intent.setDataAndType(contentUri, "application/rtf");
+        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
     } else if (path.contains(".wav") || path.contains(".mp3")) {
-        // WAV audio file
-        intent.setDataAndType(contentUri, "audio/x-wav");
+        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
     } else if (path.contains(".gif")) {
-        // GIF file
-        intent.setDataAndType(contentUri, "image/gif");
+        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
     } else if (path.contains(".jpg") || path.contains(".jpeg") || path.contains(".png")) {
-        // JPG file
-        intent.setDataAndType(contentUri, "image/jpeg");
+        // Image file
+        // Pass the data needed in a bundle
+        val bundle = Bundle()
+        bundle.putString("title", name)
+        bundle.putString("path", path)
+        // Retrieve the image fragment
+        val fragment = ImageFragment()
+        fragment.arguments = bundle
+        // Replace the home fragment with the image fragment
+        supportFragmentManager.commit {
+            replace(homeFrameLayout, fragment)
+            addToBackStack(null)
+        }
+        return
     } else if (path.contains(".txt")) {
         // Text file
+        // Pass data needed in a bundle
         val bundle = Bundle()
         bundle.putString("title", name)
         bundle.putString("content", File(path).readText())
+        // Retrieve text fragment
         val fragment = TextViewerFragment()
         fragment.arguments = bundle
-        supportFragmentManager.beginTransaction().replace(homeFrameLayout, fragment)
-            .addToBackStack(null).commit()
+        // Replace the home fragment with the text fragment
+        supportFragmentManager.commit {
+            replace(homeFrameLayout, fragment)
+            addToBackStack(null)
+        }
         return
     } else if (path.contains(".3gp") || path.contains(".mpg") || path.contains(".mpeg") || path.contains(
             ".mpe"
         ) || path.contains(".mp4") || path.contains(".avi")
     ) {
-        // Video files
-        intent.setDataAndType(contentUri, "video/*")
+        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
     } else {
-        intent.setDataAndType(contentUri, "*/*")
-    }
-
-    if (!path.contains(".txt")) {
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        MainActivity.applicationContext().startActivity(intent)
+        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
     }
 }

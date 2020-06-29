@@ -99,8 +99,8 @@ fun getAllDocuments(user: String, parent: String) {
 /**
  * Create the folder
  * @param folderName String - The folder's name
- * @param folder File - The folder
- * @param owner String - Owner of the file (by default the creator)
+ * @param folder File - The folder object
+ * @param owner String - File's owner (by default the creator)
  */
 @SuppressLint("LongLogTag")
 fun createFolder(folderName: String, folder: File, parent: String, owner: String, view: View, successMessage: String) {
@@ -152,6 +152,15 @@ fun createFolder(folderName: String, folder: File, parent: String, owner: String
     folder.delete()
 }
 
+/**
+ * Upload the file
+ * @param file File - The file object
+ * @param fileName String - The file's name
+ * @param owner String - The owner's id
+ * @param parent String - The id of the parent folder in which the user is located
+ * @param view View - The current view
+ * @param successMessage String - The success message if uploaded
+ */
 @SuppressLint("LongLogTag")
 fun uploadFile(file: File, fileName: String, owner: String, parent: String, view: View, successMessage: String) {
     val options = StorageUploadFileOptions.builder().accessLevel(StorageAccessLevel.PROTECTED).build()

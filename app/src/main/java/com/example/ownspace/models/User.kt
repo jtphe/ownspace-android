@@ -6,6 +6,8 @@ import io.realm.annotations.PrimaryKey
 /**
  * User class
  * @property id String? - User's id
+ * @property createdAt Date? - User's creation date
+ * @property updatedAt Date? - User's updating date
  * @property firstname String? - User's firstname
  * @property lastname String? - User's lastname
  * @property email String? - User's email
