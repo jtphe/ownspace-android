@@ -10,6 +10,7 @@ import io.realm.annotations.PrimaryKey
  * @property createdAt Date? - File's creation date
  * @property updatedAt Date? - File's updating date
  * @property name String? - File's name
+ * @property content String? - File's content
  * @property owner String? - File's owner
  * @property sharedList RealmList<User>? - File's sharedList
  * @property isProtected Boolean? - If the File is protected or not

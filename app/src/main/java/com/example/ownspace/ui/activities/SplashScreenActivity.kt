@@ -38,16 +38,16 @@ class SplashScreenActivity : AppCompatActivity() {
         splashProgress = findViewById(R.id.splashProgress)
         playProgress()
 
+        // Add the AWS plugins
+        Amplify.addPlugin(AWSApiPlugin())
+        Amplify.addPlugin(AWSCognitoAuthPlugin())
+        Amplify.addPlugin(AWSS3StoragePlugin())
+        Amplify.configure(applicationContext)
+
 
         //Code to start timer and take action after the timer ends
         Handler().postDelayed({
             try {
-                // Add the AWS plugins
-                Amplify.addPlugin(AWSApiPlugin())
-                Amplify.addPlugin(AWSCognitoAuthPlugin())
-                Amplify.addPlugin(AWSS3StoragePlugin())
-                Amplify.configure(applicationContext)
-
                 // Check the current auth session
                 Amplify.Auth.fetchAuthSession(
                     { result ->

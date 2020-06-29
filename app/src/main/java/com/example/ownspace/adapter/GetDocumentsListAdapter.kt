@@ -17,7 +17,14 @@ import com.example.ownspace.ui.openDocument
 import kotlinx.android.synthetic.main.document_item_list.view.*
 import java.io.File
 
-
+/**
+ * The GetDocumentListAdapter class
+ * @property list MutableIterable<Any> - List of files and folders
+ * @property view View - The current view
+ * @property supportFragmentManager FragmentManager - The fragment manager
+ * @property homeFrameLayout Int - The id of the homeFrameLayout
+ * @constructor
+ */
 class GetDocumentsListAdapter(
     private val list: MutableIterable<Any>,
     private val view: View,
@@ -86,6 +93,11 @@ class GetDocumentsListAdapter(
         }
     }
 
+    /**
+     * Download the file from AWS S3
+     * @param name String - The file name
+     * @param currentPath String - The current path of the file
+     */
     private fun downloadFile(name: String, currentPath: String) {
         val options = StorageDownloadFileOptions.builder()
             .accessLevel(StorageAccessLevel.PROTECTED)
