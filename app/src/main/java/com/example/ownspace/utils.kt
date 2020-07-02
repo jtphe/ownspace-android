@@ -79,107 +79,119 @@ fun openDocument(
     }
 
     // Check the type of file
-    if (path.contains(".doc") || path.contains(".docx")) {
-        showSnackbar(
-            view,
-            "Impossible d'ouvrir le fichier. Format non supporté",
-            true
-        )
-    } else if (path.contains(".pdf")) {
-        // PDF file
+    when {
+        path.contains(".doc") || path.contains(".docx") -> {
+            showSnackbar(
+                view,
+                "Impossible d'ouvrir le fichier. Format non supporté",
+                true
+            )
+        }
+        path.contains(".pdf") -> {
+            // PDF file
 
-        // Pass the data needed in a bundle
-        val bundle = Bundle()
-        bundle.putString("path", newPath)
-        // Retrieve the pdf fragment
-        val fragment = PdfFragment()
-        fragment.arguments = bundle
-        // Replace the home fragment with the image fragment
-        supportFragmentManager.commit {
-            replace(homeFrameLayout, fragment)
-            addToBackStack(null)
+            // Pass the data needed in a bundle
+            val bundle = Bundle()
+            bundle.putString("path", newPath)
+            // Retrieve the pdf fragment
+            val fragment = PdfFragment()
+            fragment.arguments = bundle
+            // Replace the home fragment with the image fragment
+            supportFragmentManager.commit {
+                replace(homeFrameLayout, fragment)
+                addToBackStack(null)
+            }
+            return
         }
-        return
-    } else if (path.contains(".ppt") || path.contains(".pptx")) {
-        showSnackbar(
-            view,
-            "Impossible d'ouvrir le fichier. Format non supporté",
-            true
-        )
-    } else if (path.contains(".xls") || path.contains(".xlsx")) {
-        showSnackbar(
-            view,
-            "Impossible d'ouvrir le fichier. Format non supporté",
-            true
-        )
-    } else if (path.contains(".zip") || path.contains(".rar")) {
-        showSnackbar(
-            view,
-            "Impossible d'ouvrir le fichier. Format non supporté",
-            true
-        )
-    } else if (path.contains(".rtf")) {
-        showSnackbar(
-            view,
-            "Impossible d'ouvrir le fichier. Format non supporté",
-            true
-        )
-    } else if (path.contains(".wav") || path.contains(".mp3")) {
-        showSnackbar(
-            view,
-            "Impossible d'ouvrir le fichier. Format non supporté",
-            true
-        )
-    } else if (path.contains(".gif")) {
-        showSnackbar(
-            view,
-            "Impossible d'ouvrir le fichier. Format non supporté",
-            true
-        )
-    } else if (path.contains(".jpg") || path.contains(".jpeg") || path.contains(".png")) {
-        // Image file
-        // Pass the data needed in a bundle
-        val bundle = Bundle()
-        bundle.putString("title", name)
-        bundle.putString("path", path)
-        // Retrieve the image fragment
-        val fragment = ImageFragment()
-        fragment.arguments = bundle
-        // Replace the home fragment with the image fragment
-        supportFragmentManager.commit {
-            replace(homeFrameLayout, fragment)
-            addToBackStack(null)
+        path.contains(".ppt") || path.contains(".pptx") -> {
+            showSnackbar(
+                view,
+                "Impossible d'ouvrir le fichier. Format non supporté",
+                true
+            )
         }
-        return
-    } else if (path.contains(".txt")) {
-        // Text file
-        // Pass data needed in a bundle
-        val bundle = Bundle()
-        bundle.putString("title", name)
-        bundle.putString("content", File(path).readText())
-        // Retrieve text fragment
-        val fragment = TextViewerFragment()
-        fragment.arguments = bundle
-        // Replace the home fragment with the text fragment
-        supportFragmentManager.commit {
-            replace(homeFrameLayout, fragment)
-            addToBackStack(null)
+        path.contains(".xls") || path.contains(".xlsx") -> {
+            showSnackbar(
+                view,
+                "Impossible d'ouvrir le fichier. Format non supporté",
+                true
+            )
         }
-        return
-    } else if (path.contains(".3gp") || path.contains(".mpg") || path.contains(".mpeg") || path.contains(
+        path.contains(".zip") || path.contains(".rar") -> {
+            showSnackbar(
+                view,
+                "Impossible d'ouvrir le fichier. Format non supporté",
+                true
+            )
+        }
+        path.contains(".rtf") -> {
+            showSnackbar(
+                view,
+                "Impossible d'ouvrir le fichier. Format non supporté",
+                true
+            )
+        }
+        path.contains(".wav") || path.contains(".mp3") -> {
+            showSnackbar(
+                view,
+                "Impossible d'ouvrir le fichier. Format non supporté",
+                true
+            )
+        }
+        path.contains(".gif") -> {
+            showSnackbar(
+                view,
+                "Impossible d'ouvrir le fichier. Format non supporté",
+                true
+            )
+        }
+        path.contains(".jpg") || path.contains(".jpeg") || path.contains(".png") -> {
+            // Image file
+            // Pass the data needed in a bundle
+            val bundle = Bundle()
+            bundle.putString("title", name)
+            bundle.putString("path", path)
+            // Retrieve the image fragment
+            val fragment = ImageFragment()
+            fragment.arguments = bundle
+            // Replace the home fragment with the image fragment
+            supportFragmentManager.commit {
+                replace(homeFrameLayout, fragment)
+                addToBackStack(null)
+            }
+            return
+        }
+        path.contains(".txt") -> {
+            // Text file
+            // Pass data needed in a bundle
+            val bundle = Bundle()
+            bundle.putString("title", name)
+            bundle.putString("content", File(path).readText())
+            // Retrieve text fragment
+            val fragment = TextViewerFragment()
+            fragment.arguments = bundle
+            // Replace the home fragment with the text fragment
+            supportFragmentManager.commit {
+                replace(homeFrameLayout, fragment)
+                addToBackStack(null)
+            }
+            return
+        }
+        path.contains(".3gp") || path.contains(".mpg") || path.contains(".mpeg") || path.contains(
             ".mpe"
-        ) || path.contains(".mp4") || path.contains(".avi")
-    ) {
-        showSnackbar(
-            view,
-            "Impossible d'ouvrir le fichier. Format non supporté",
-            true
-        )
-    } else {
-        showSnackbar(
-            view,
-            "Impossible d'ouvrir le fichier. Format non supporté",
-            true
-        )
+        ) || path.contains(".mp4") || path.contains(".avi") -> {
+            showSnackbar(
+                view,
+                "Impossible d'ouvrir le fichier. Format non supporté",
+                true
+            )
+        }
+        else -> {
+            showSnackbar(
+                view,
+                "Impossible d'ouvrir le fichier. Format non supporté",
+                true
+            )
+        }
     }
 }

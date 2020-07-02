@@ -55,6 +55,27 @@ class MainActivity : AppCompatActivity() {
 
     private val currentUser = Amplify.Auth.currentUser
 
+    private val documentsObserver = Observer<MutableIterable<Any>> {
+        GlobalScope.launch {
+            withContext(Dispatchers.Main) {
+                recyclerViewDocuments.apply {
+                    ConstraintLayout.inflate(
+                        context,
+                        R.layout.activity_main,
+                        null
+                    ) as ConstraintLayout
+                    layoutManager = LinearLayoutManager(context)
+                    adapter = GetDocumentsListAdapter(
+                        it,
+                        rootView,
+                        supportFragmentManager,
+                        rootView.homeFrameLayout.id
+                    )
+                }
+            }
+        }
+    }
+
     companion object {
         // Image pick mode
         private val IMAGE_PICK_CODE = 1000
@@ -73,33 +94,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        documentList.observe(this, documentsObserver)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        documentList.removeObserver(documentsObserver)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         changeIconColor(home)
-
-        val documentsObserver = Observer<MutableIterable<Any>> {
-            GlobalScope.launch {
-                withContext(Dispatchers.Main) {
-                    recyclerViewDocuments.apply {
-                        ConstraintLayout.inflate(
-                            context,
-                            R.layout.activity_main,
-                            null
-                        ) as ConstraintLayout
-                        layoutManager = LinearLayoutManager(context)
-                        adapter = GetDocumentsListAdapter(
-                            it,
-                            rootView,
-                            supportFragmentManager,
-                            rootView.homeFrameLayout.id
-                        )
-                    }
-                }
-            }
-        }
-
-        documentList.observe(this, documentsObserver)
 
         // Load all the document of the current path
         val currentPath = Path().queryFirst()!!.path
@@ -108,7 +116,6 @@ class MainActivity : AppCompatActivity() {
                 currentUser.userId,
                 id
             )
-
         }
 
         if (AWSMobileClient.getInstance().isSignedIn) {
