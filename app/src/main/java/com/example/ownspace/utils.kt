@@ -1,4 +1,4 @@
-package com.example.ownspace.ui
+package com.example.ownspace
 
 import android.graphics.Color
 import android.net.Uri
@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
-import com.example.ownspace.R
 import com.example.ownspace.models.Path
 import com.example.ownspace.ui.fragments.ImageFragment
 import com.example.ownspace.ui.fragments.PdfFragment
@@ -81,7 +80,11 @@ fun openDocument(
 
     // Check the type of file
     if (path.contains(".doc") || path.contains(".docx")) {
-        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
+        showSnackbar(
+            view,
+            "Impossible d'ouvrir le fichier. Format non supporté",
+            true
+        )
     } else if (path.contains(".pdf")) {
         // PDF file
 
@@ -98,17 +101,41 @@ fun openDocument(
         }
         return
     } else if (path.contains(".ppt") || path.contains(".pptx")) {
-        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
+        showSnackbar(
+            view,
+            "Impossible d'ouvrir le fichier. Format non supporté",
+            true
+        )
     } else if (path.contains(".xls") || path.contains(".xlsx")) {
-        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
+        showSnackbar(
+            view,
+            "Impossible d'ouvrir le fichier. Format non supporté",
+            true
+        )
     } else if (path.contains(".zip") || path.contains(".rar")) {
-        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
+        showSnackbar(
+            view,
+            "Impossible d'ouvrir le fichier. Format non supporté",
+            true
+        )
     } else if (path.contains(".rtf")) {
-        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
+        showSnackbar(
+            view,
+            "Impossible d'ouvrir le fichier. Format non supporté",
+            true
+        )
     } else if (path.contains(".wav") || path.contains(".mp3")) {
-        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
+        showSnackbar(
+            view,
+            "Impossible d'ouvrir le fichier. Format non supporté",
+            true
+        )
     } else if (path.contains(".gif")) {
-        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
+        showSnackbar(
+            view,
+            "Impossible d'ouvrir le fichier. Format non supporté",
+            true
+        )
     } else if (path.contains(".jpg") || path.contains(".jpeg") || path.contains(".png")) {
         // Image file
         // Pass the data needed in a bundle
@@ -143,8 +170,16 @@ fun openDocument(
             ".mpe"
         ) || path.contains(".mp4") || path.contains(".avi")
     ) {
-        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
+        showSnackbar(
+            view,
+            "Impossible d'ouvrir le fichier. Format non supporté",
+            true
+        )
     } else {
-        showSnackbar(view, "Impossible d'ouvrir le fichier. Format non supporté", true)
+        showSnackbar(
+            view,
+            "Impossible d'ouvrir le fichier. Format non supporté",
+            true
+        )
     }
 }

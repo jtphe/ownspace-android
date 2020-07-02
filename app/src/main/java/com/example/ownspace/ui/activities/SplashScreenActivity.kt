@@ -13,7 +13,7 @@ import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin
 import com.example.ownspace.R
-import com.example.ownspace.ui.showSnackbar
+import com.example.ownspace.showSnackbar
 import com.facebook.drawee.backends.pipeline.Fresco
 import io.realm.Realm
 

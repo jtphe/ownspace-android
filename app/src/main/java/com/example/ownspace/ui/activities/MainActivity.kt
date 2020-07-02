@@ -26,7 +26,7 @@ import com.example.ownspace.api.getAllDocuments
 import com.example.ownspace.api.uploadFile
 import com.example.ownspace.models.Path
 import com.example.ownspace.models.User
-import com.example.ownspace.ui.showSnackbar
+import com.example.ownspace.showSnackbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.vicpin.krealmextensions.deleteAll
 import com.vicpin.krealmextensions.queryFirst

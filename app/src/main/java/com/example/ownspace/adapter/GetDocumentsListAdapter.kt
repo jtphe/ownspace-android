@@ -12,8 +12,8 @@ import com.amplifyframework.storage.options.StorageDownloadFileOptions
 import com.example.ownspace.R
 import com.example.ownspace.models.Folder
 import com.example.ownspace.ui.activities.MainActivity
-import com.example.ownspace.ui.getCurrentPathString
-import com.example.ownspace.ui.openDocument
+import com.example.ownspace.getCurrentPathString
+import com.example.ownspace.openDocument
 import kotlinx.android.synthetic.main.document_item_list.view.*
 import java.io.File
 
