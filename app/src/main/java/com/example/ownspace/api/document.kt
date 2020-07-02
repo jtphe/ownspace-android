@@ -10,8 +10,8 @@ import com.amplifyframework.datastore.generated.model.Folder
 import com.amplifyframework.storage.StorageAccessLevel
 import com.amplifyframework.storage.options.StorageUploadFileOptions
 import com.example.ownspace.ui.activities.MainActivity.Companion.documentList
-import com.example.ownspace.ui.getCurrentPathString
-import com.example.ownspace.ui.showSnackbar
+import com.example.ownspace.getCurrentPathString
+import com.example.ownspace.showSnackbar
 import com.vicpin.krealmextensions.save
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

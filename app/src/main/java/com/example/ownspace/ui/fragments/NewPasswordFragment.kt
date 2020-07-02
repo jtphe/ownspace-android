@@ -16,7 +16,7 @@ import com.amazonaws.mobile.client.results.SignInResult
 import com.amazonaws.mobile.client.results.SignInState
 import com.example.ownspace.R
 import com.example.ownspace.ui.activities.MainActivity
-import com.example.ownspace.ui.showSnackbar
+import com.example.ownspace.showSnackbar
 import kotlinx.android.synthetic.main.fragment_new_password.*
 
 /**
@@ -35,7 +35,11 @@ class NewPasswordFragment : Fragment() {
         validBtn.setOnClickListener {
             if (newPasswordEditText.text.toString().trim().isEmpty()) {
                 closeKeyboard()
-                showSnackbar(it, getString(R.string.editText_empty), true)
+                showSnackbar(
+                    it,
+                    getString(R.string.editText_empty),
+                    true
+                )
             } else {
                 closeKeyboard()
                 confirmSignIn(view, newPasswordEditText.text.toString())

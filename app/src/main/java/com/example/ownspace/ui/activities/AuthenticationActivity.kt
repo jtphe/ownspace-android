@@ -9,17 +9,10 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
-import com.amazonaws.mobile.client.AWSMobileClient
-import com.amazonaws.mobile.client.Callback
-import com.amazonaws.mobile.client.UserState
-import com.amazonaws.mobile.client.UserStateDetails
-import com.amazonaws.mobile.client.results.SignInResult
-import com.amazonaws.mobile.client.results.SignInState
 import com.amplifyframework.core.Amplify
 import com.example.ownspace.R
 import com.example.ownspace.ui.fragments.TotpFragment
-import com.example.ownspace.ui.showSnackbar
+import com.example.ownspace.showSnackbar
 import kotlinx.android.synthetic.main.activity_authentication.*
 
 /**
@@ -51,7 +44,11 @@ class AuthenticationActivity : AppCompatActivity() {
             val password: String = passwordInput.text.toString()
 
             if (username.trim().isEmpty() || password.trim().isEmpty()) {
-                showSnackbar(it, getString(R.string.editText_empty), true)
+                showSnackbar(
+                    it,
+                    getString(R.string.editText_empty),
+                    true
+                )
             } else {
                 Amplify.Auth.signIn(
                     username,
@@ -62,7 +59,11 @@ class AuthenticationActivity : AppCompatActivity() {
                         }
                     },
                     { error ->
-                        showSnackbar(it, getString(R.string.toast_signin_error), true)
+                        showSnackbar(
+                            it,
+                            getString(R.string.toast_signin_error),
+                            true
+                        )
                         Log.e("Error sign in =>", error.toString())
                     }
                 )
